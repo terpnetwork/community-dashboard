@@ -1,1 +1,0 @@
-# Details on Technology Powering The Dashboard
