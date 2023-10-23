@@ -7,14 +7,89 @@ import {
   PageHeaderHeading,
 } from "@/components/utils/page-header"
 import { Separator } from "@/components/ui/separator"
-import { ArrowRightIcon } from "@radix-ui/react-icons"
+import { ArrowRightIcon, PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+
 import { siteConfig } from "@/config/site"
 import { Icons } from "@/components/ui/icons"
+import { useChain, useWallet } from "@cosmos-kit/react";
+import { useIsClient } from "@/hooks";
+import { useEffect } from "react";
+import { Badge } from "@/components/ui/badge"
 
+import { ChainWalletCard } from "@/components/wallet/chain-wallet-card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@interchain-ui/react"
+import { buttonVariants } from "@/components/ui/button"
+
+const chainNames_1 = ["terpnetwork"];
+const chainNames_2: string[] = [];
 
 export default function Home() {
+  const { username, connect, disconnect, wallet, openView } = useChain(
+    chainNames_1[0]
+  );
+  const { status: globalStatus, mainWallet } = useWallet(); // status here is the global wallet status for all activated chains (chain is activated when call useChain)
+  const isClient = useIsClient();
+
+  useEffect(() => {
+    const fn = async () => {
+      await mainWallet?.connect();
+    };
+    fn();
+  }, []);
+
+  if (!isClient) return null;
+
+  const getGlobalbutton = () => {
+    if (globalStatus === "Connecting") {
+      return (
+        <Button onClick={() => connect()}>
+          <PaperPlaneIcon className="mr-2 h-4 w-4" />
+          {`Connecting ${wallet?.prettyName}`}
+        </Button>
+      );
+    }
+    if (globalStatus === "Connected") {
+      return (
+        <>
+          <Button variant="outlined" size="sm" onClick={() => openView()}>
+            <div className="flex justify-center items-center space-x-2">
+              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-500 leading-4 mb-2" />
+              <span>Connected to: {wallet?.prettyName}</span>
+            </div>
+          </Button>
+
+          <Badge className="flex" variant="outline">
+            Account name: {username}
+          </Badge>
+
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              await disconnect();
+              // setGlobalStatus(WalletStatus.Disconnected);
+            }}
+          >
+            <ResetIcon className="mr-2 h-4 w-4" />
+            Disconnect
+          </Button>
+        </>
+      );
+    }
+
+    return (
+    <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
+     
+      <Button
+     onClick={() => connect()}
+   
+     >Connect Wallet</Button>
+     </div>
+     );
+  };
+
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 `}
@@ -54,7 +129,37 @@ export default function Home() {
       </PageHeader>
 
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-    
+       <Card className="min-w-[350px] max-w-[800px] mt-20 mx-auto p-10">
+      <CardHeader>
+        <CardTitle>
+          <p className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Connect with a Cosmos Compatible Wallet
+          </p>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="flex justify-start space-x-5"></div>
+        {getGlobalbutton()}
+        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+     
+        </h2>
+        {chainNames_1.map((chainName) => (
+          <ChainWalletCard
+            key={chainName}
+            type="address-in-modal"
+            chainName={chainName}
+          />
+        ))}
+       
+        {chainNames_2.map((chainName) => (
+          <ChainWalletCard
+            key={chainName}
+            type="address-on-page"
+            chainName={chainName}
+          />
+        ))}
+      </CardContent>
+    </Card>
       </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">

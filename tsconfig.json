@@ -20,7 +20,8 @@
       "@/config/*": ["config/*"],
       "@/components/*": ["components/*"],
       "@/lib/*": ["lib/*"],
-      "@/public/*": ["public/*"]
+      "@/public/*": ["public/*"],
+      "@/hooks/*": ["hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
