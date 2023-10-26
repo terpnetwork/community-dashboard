@@ -44,7 +44,7 @@ export default function Home() {
   const getGlobalbutton = () => {
     if (globalStatus === "Connecting") {
       return (
-        <Button onClick={() => connect()}>
+        <Button variant="outlined" onClick={() => connect()}>
           <PaperPlaneIcon className="mr-2 h-4 w-4" />
           {`Connecting ${wallet?.prettyName}`}
         </Button>
@@ -102,7 +102,7 @@ export default function Home() {
           🎉 <Separator className="mx-2 h-4" orientation="vertical" />{" "}
           <span className="sm:hidden">Style, a new CLI and more.</span>
           <span className="hidden sm:inline">
-            Introducing the Terp Network Community Dashboard, a collaborative, sensorship-resistant ui.
+            Introducing the Terp Network Community Dashboard, a collaborative, censorship-resistant ui.
           </span>
           <ArrowRightIcon className="ml-1 h-4 w-4" />
         </Link>
