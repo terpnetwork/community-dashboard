@@ -30,7 +30,6 @@ export interface HeadstashAirdropProps {
   name: string
   contractAddress: string
   merkleRoot: string
-  cw20TokenAddress: string
   totalAmount: number
   activeStep: string
   start: number | null

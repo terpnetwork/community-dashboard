@@ -5,10 +5,12 @@ import MetamaskConnectButton from "../../components/wallet/metamask-connect-butt
 import { ArrowRightIcon, PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
 import { Badge } from "@/components/ui/badge"
 import { useIsClient } from "@/hooks";
+import { toast } from 'react-hot-toast'
 import { ethers } from "ethers";
 import router, { useRouter } from "next/router";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
+import MerkleProofGenerator from "@/utils/proof/generateProofs";
 
 const chainNames_1 = ["terpnetwork"];
 const chainNames_2: string[] = [];
@@ -35,6 +37,7 @@ export default function Headstash() {
       const [stage, setStage] = useState(0)
       const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
       const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
+
       const contractAddress = String(router.query.address)
       const transactionMessage =
       headstashAirdropContract?.messages()?.claim(contractAddress, stage, amount, eth_pubkey, eth_sig, proofs, signedMessage) || null
@@ -45,22 +48,22 @@ export default function Headstash() {
       }
 
 // if cosmos wallet not connected, connect.
-      // useEffect(() => { 
-      //   try {
-      //     if (status === 'Disconnected') {
-      //       connect(ConnectType.EXTENSION)
-      //     }
-      //   } catch (err: any) {
-      //     toast.error(err.message, {
-      //       style: { maxWidth: 'none' },
-      //     })
-      //   }
-      // }, [contractAddress, wallets])
+      useEffect(() => { 
+        try {
+          if (status === 'Disconnected') {
+            connect(ConnectType.EXTENSION)
+          }
+        } catch (err: any) {
+          toast.error(err.message, {
+            style: { maxWidth: 'none' },
+          })
+        }
+      }, [contractAddress, wallet])
 
 // set the signed claim message. 
-      // useEffect(() => {
-      //   setSignedMessage({ claim_msg: claimMsg, signature })
-      // }, [signature, claimMsg])
+      useEffect(() => {
+        setSignedMessage({ claim_msg: claimMsg, signature })
+      }, [signature, claimMsg])
 
 // get headstash info.  [including proofs]     
       // useEffect(() => {
@@ -82,11 +85,10 @@ export default function Headstash() {
       //         // eslint-disable-next-line @typescript-eslint/no-shadow
       //         const stage = await headstashAirdropContractMessages?.getLatestStage()
       //         const isClaimed = await headstashAirdropContractMessages?.isClaimed(address, stage || 0)
-    
+                
       //         setProofs(account.proofs)
       //         setAmount((account.amount as number).toString())
       //         setName(headstash.name)
-      //         setCW20TokenAddress(airdrop.cw20TokenAddress) // prob won't need
     
       //         if (isClaimed) setHeadstashState('claimed')
       //         else setHeadstashState('not_claimed')
@@ -115,7 +117,7 @@ export default function Headstash() {
 // claim headstash message.
       // const claim = async () => {
       //   try {
-      //     if (isWalletDisconnected === 'true') return toast.error('Please connect your wallet!')
+      //     if (status === 'Disconnected') return toast.error('Please connect your wallet!')
       //     if (!headstashAirdropContract) return toast.error('Could not connect to smart contract')
 
       //     setLoading(true)
@@ -260,7 +262,7 @@ export default function Headstash() {
           <Button
          onClick={() => connect()}
        
-         >Connect Wallet</Button>
+         >View Compatible Wallets</Button>
          </div>
          );
       };;
@@ -302,6 +304,7 @@ export default function Headstash() {
                             <MetamaskConnectButton setError={function (error: string | null): void {
                                 throw new Error("Function not implemented.");
                             }} />
+                              <h2>Your Headstash Amount:</h2>
                         </div>
                     </div>
                 </div>
@@ -324,8 +327,7 @@ export default function Headstash() {
                                     bgGradient="linear(to-r, green.400,purple.500)"
                                     fontWeight="extrabold"
                                 >2</Text></h1>
-                            <h1>Connect Cosmos Wallet To Dashboard</h1>
-                            <p>View list of compatible wallets.</p>
+                            <h1>Connect Cosmos Wallet</h1>
                             <br />
                             {getGlobalbutton()}
 
@@ -386,8 +388,7 @@ export default function Headstash() {
                             <h1> Generate Proof's</h1>
                             <p></p>
                             <br />
-
-
+                            {/* <button onClick={handleGenerateProof}>Generate Merkle Proof</button> */}
                         </div>
                     </div>
                 </div>
