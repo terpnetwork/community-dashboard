@@ -19,6 +19,7 @@
       "@/*": ["./*"],
       "@/config/*": ["config/*"],
       "@/components/*": ["components/*"],
+      "@/contracts/*": ["contracts/*"],
       "@/lib/*": ["lib/*"],
       "@/public/*": ["public/*"],
       "@/hooks/*": ["hooks/*"]
