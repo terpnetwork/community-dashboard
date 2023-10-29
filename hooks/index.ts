@@ -1,3 +1,11 @@
-export * from './useInputBox';
-export * from './useFeeEstimation';
-export * from './useTransactionToast';
+import * as React from "react";
+
+export function useIsClient() {
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient;
+}
