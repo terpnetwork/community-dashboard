@@ -10,9 +10,10 @@ const MetamaskConnectButton: React.FC<{ setError: (error: string | null) => void
   const connectWallet = async () => {
     if ((window as any).ethereum) {
       try {
-        const addressArray = await (window as any).ethereum.request({
+        const addressArray = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
+        const userAddress = addressArray[0];
         const obj = {
           address: addressArray[0],
         };

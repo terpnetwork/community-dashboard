@@ -11,10 +11,13 @@ import router, { useRouter } from "next/router";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import MerkleProofGenerator from "@/utils/proof/generateProofs";
-
+import axios from 'axios';
+import { headstashData } from '../api/headstashData';
+import amount from '../api/headstashData';
 const chainNames_1 = ["terpnetwork"];
 const chainNames_2: string[] = [];
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
+
 
 export default function Headstash() {
     const router = useRouter()
@@ -26,7 +29,6 @@ export default function Headstash() {
       const headstashAirdropContract = useContracts().headstashAirdrop
       const [signature, setSignature] = useState('')
       const [claimMsg, setClaimMsg] = useState('')
-      const [amount, setAmount] = useState('')
       const [eth_pubkey, setEthPubkey] = useState('')
       const [eth_sig, setEthSig] = useState('')
       const [loading, setLoading] = useState(false)
@@ -37,15 +39,104 @@ export default function Headstash() {
       const [stage, setStage] = useState(0)
       const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
       const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
+      const [account, setAccount] = useState('');
+      
 
-      const contractAddress = String(router.query.address)
+      const contractAddress = String(router.query.address);
       const transactionMessage =
-      headstashAirdropContract?.messages()?.claim(contractAddress, stage, amount, eth_pubkey, eth_sig, proofs, signedMessage) || null
+          headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs, signedMessage) || null;
+  
+          const [amount, setAmount] = useState(''); // State to hold the Headstash amount
+          const [verificationDetails, setVerificationDetails] = useState(() => {
+            try {
+              // Load verification details from local storage if on the client side
+              if (isClient) {
+                const storedDetails = localStorage.getItem("verificationDetails");
+                return storedDetails ? JSON.parse(storedDetails) : null;
+              }
+              return null;
+            } catch (error) {
+              console.error("Error loading from localStorage:", error);
+              return null;
+            }
+          });
+        
+          // State to track verification status
+          const [isVerified, setIsVerified, setItem] = useState(false);
+        
+// Fetch and set the Headstash amount when the wallet is connected
+useEffect(() => {
+  console.log('Status:', status);
+  console.log('Address:', address);
 
-      const getHeadstash = async (address: string) => {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/airdrops/status/${address}`)
-        return data.airdrop
+  const fetchHeadstashData = async (walletAddress) => {
+    try {
+      if (status === 'Connected' && walletAddress) {
+        // Check if the wallet is a MetaMask wallet
+        if (wallet?.type.toLowerCase() === 'metamask') {
+          const metaMaskWalletAddress = walletAddress.toLowerCase();
+          const matchedData = headstashData.find((data) => data.address.toLowerCase() === metaMaskWalletAddress);
+
+          if (matchedData) {
+            // Set the amount from the matched data
+            setAmount(matchedData.amount);
+          } else {
+            // Handle the case when no matching data is found
+            setAmount('No data found for this MetaMask wallet');
+          }
+        } else {
+          // Handle other wallet types if needed
+          setAmount('Unsupported wallet type');
+        }
       }
+    } catch (error) {
+      console.error('Error fetching Headstash data:', error);
+      setAmount('Error fetching data');
+    }
+  };
+
+  void fetchHeadstashData(address);
+}, [status, address, wallet]);
+
+// Fetch and set the Headstash amount when verification details are available
+useEffect(() => {
+  // Check if verification details exist
+  if (verificationDetails && verificationDetails.address) {
+    const verificationAddress = verificationDetails.address.toLowerCase();
+    const matchedData = headstashData.find((data) => data.address.toLowerCase() === verificationAddress);
+
+    if (matchedData) {
+      // Set the amount from the matched data
+      setAmount(matchedData.amount);
+    } else {
+      // Handle the case when no matching data is found
+      setAmount('No data found for this verification address');
+    }
+  }
+}, [verificationDetails]);
+
+
+    // Function to fetch Headstash data
+    const fetchHeadstashData = (address) => {
+      if (address) {
+          const matchedData = headstashData.find((data) => data.address.toLowerCase() === address.toLowerCase());
+  
+          if (matchedData) {
+              // Set the amount from the matched data
+              setAmount(matchedData.amount);
+          } else {
+              // Handle the case when no matching data is found
+              setAmount('No data found for this wallet');
+          }
+      }
+  };
+
+      // Fetch and set the Headstash amount when the wallet is connected
+useEffect(() => {
+    if (status === 'Connected' && address) {
+        fetchHeadstashData(address);
+    }
+}, [status, address]);
 
 // if cosmos wallet not connected, connect.
       useEffect(() => { 
@@ -215,6 +306,48 @@ export default function Headstash() {
         props.onSubmit(sig);
     }
     };
+
+    // Handle personal_sign
+  const handlePersonalSign = async () => {
+    try {
+      // Ensure MetaMask is connected
+      if (!window.ethereum || !window.ethereum.selectedAddress) {
+        console.error("MetaMask not connected or address not available");
+        return;
+      }
+
+      const from = window.ethereum.selectedAddress;
+      const exampleMessage = 'verify your Metamask Wallet.';
+      const msg = `0x${Buffer.from(exampleMessage, 'utf8').toString('hex')}`;
+      const sign = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [msg, from],
+      });
+
+      const sig = {
+        message: exampleMessage,
+        signatureHash: sign,
+        address: from,
+        timestamp: new Date().toISOString(),
+      };
+
+      console.log("Personal Sign Signature:", sig);
+
+      // Save verification details to local storage if available
+      if (isClient && typeof localStorage !== "undefined") {
+        localStorage.setItem("verificationDetails", JSON.stringify(sig));
+      }
+
+      // Update state with verification details
+      setVerificationDetails(sig);
+      setIsVerified(true);
+
+      // Save verification details to local storage
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
       // cosmos wallet connect
       const getGlobalbutton = () => {
         if (globalStatus === "Connecting") {
@@ -304,7 +437,7 @@ export default function Headstash() {
                             <MetamaskConnectButton setError={function (error: string | null): void {
                                 throw new Error("Function not implemented.");
                             }} />
-                              <h2>Your Headstash Amount:</h2>
+                              <h2>Your Headstash Amount:{amount !== '' ? amount : 'Loading...'}</h2>
                         </div>
                     </div>
                 </div>
@@ -353,15 +486,42 @@ export default function Headstash() {
                                     bgGradient="linear(to-r, green.400,purple.500)"
                                     fontWeight="extrabold"
                                 >3</Text></h1>
-                            <h1>Verify Metamask Ownership</h1>
-                            <p>A signed message will verify you own your wallet.</p>
-                            <br />
-                            <Button
-                                width="260px"
-                                btnContent="Follow Terp on X"
-                                handleClick={toRegistration}
-
-                            />
+                             <h1>Verify Metamask Ownership</h1>
+              <p>A signed message will verify you own your wallet.</p>
+              <br />
+              <button
+                style={{
+                  width: '260px',
+                  padding: '12px',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+                onClick={handlePersonalSign}
+                disabled={isVerified}
+              >
+                Verify!
+              </button>
+              <div></div>
+              {verificationDetails ? (
+  <Badge className="verification-details-badge">
+  <p>Signature Hash: {verificationDetails.signatureHash}</p>
+</Badge>
+) : null}
+<div></div>
+{verificationDetails ? (
+  <Badge className="verification-details-badge">
+  <p>Address: {verificationDetails.address}</p>
+</Badge>
+) : null}
+<div></div>
+{verificationDetails ? (
+  <Badge className="verification-details-badge">
+  <p>Timestamp: {verificationDetails.timestamp}</p>
+</Badge>
+) : null}
 
                         </div>
                     </div>
