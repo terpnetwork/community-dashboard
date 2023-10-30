@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 
+interface MetamaskConnectButtonProps {
+  handleEthPubkey: (eth_pubkey: string) => void;
+}
 
-const MetamaskConnectButton: React.FC<{ setError: (error: string | null) => void }> = ({
-  setError,
+const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
+  handleEthPubkey,
 }) => {
-  const [walletAddress, setWallet] = useState<string>("");
-  
+  const [eth_pubkey, setEthPubkey] = useState<string>("");
+
 
   const connectWallet = async () => {
     if ((window as any).ethereum) {
@@ -57,7 +60,7 @@ const MetamaskConnectButton: React.FC<{ setError: (error: string | null) => void
   const walletConnectHandler = async () => {
     try {
       const walletResponse = await connectWallet();
-      setWallet(walletResponse.address);
+      setEthPubkey(walletResponse.address);
     } catch (e) {
     }
   };
@@ -66,10 +69,10 @@ const MetamaskConnectButton: React.FC<{ setError: (error: string | null) => void
     if ((window as any).ethereum) {
       (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
-          setWallet(accounts[0]);
+          setEthPubkey(accounts[0]);
           setError(null);
         } else {
-          setWallet("");
+          setEthPubkey("");
         }
       });
     } else {
@@ -82,23 +85,26 @@ const MetamaskConnectButton: React.FC<{ setError: (error: string | null) => void
   const load = async () => {
     try {
       const address = await getConnectedMetamaskWallet();
-      setWallet(address.address);
+      setEthPubkey(address.address);
       addWalletListener();
     } catch (e) {
     }
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    load().then(() => {
+      // After loading, call the callback to provide the wallet address
+      handleEthPubkey(eth_pubkey);
+    });
+  }, [eth_pubkey, handleEthPubkey]);
 
   return (
     <div>
       <button className="wallet-button" onClick={walletConnectHandler}>
-        {walletAddress.length > 0 ? (
-          String(walletAddress).substring(0, 6) +
+        {eth_pubkey.length > 0 ? (
+          String(eth_pubkey).substring(0, 6) +
           "..." +
-          String(walletAddress).substring(38)
+          String(eth_pubkey).substring(38)
         ) : (
           <span>Connect Wallet</span>
         )}
