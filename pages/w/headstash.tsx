@@ -321,8 +321,9 @@ export default function Headstash() {
         return;
       }
 
+      const terpAddress: string = address.toString();
       const from = window.ethereum.selectedAddress;
-      const exampleMessage = 'verify your Metamask Wallet.';
+      const exampleMessage = terpAddress;
       const msg = `0x${Buffer.from(exampleMessage, 'utf8').toString('hex')}`;
       const sign = await window.ethereum.request({
         method: 'personal_sign',
