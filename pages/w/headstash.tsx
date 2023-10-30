@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Text } from "@interchain-ui/react"
 import { useChain, useWallet } from "@cosmos-kit/react";
 import MetamaskConnectButton from "../../components/wallet/metamask-connect-button";
-import { ArrowRightIcon, PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
+import {  PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
 import { Badge } from "@/components/ui/badge"
 import { useIsClient } from "@/hooks";
 import { toast } from 'react-hot-toast'
@@ -11,12 +11,11 @@ import router, { useRouter } from "next/router";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import MerkleProofGenerator from "@/utils/proof/generateProofs";
-import axios from 'axios';
 import { headstashData } from '../api/headstashData';
 import amount from '../api/headstashData';
 const chainNames_1 = ["terpnetwork"];
-const chainNames_2: string[] = [];
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
+
 
 
 export default function Headstash() {
@@ -74,14 +73,14 @@ export default function Headstash() {
     console.log('Status:', status);
     console.log('Address:', address);
     console.log('Metamask:', eth_pubkey);
+    // console.log('headstashData:', headstashData);
 
-    const fetchHeadstashData = async (eth_pubkey) => {
+    const fetchHeadstashData = async (eth_pubkey: string) => {
       try {
         if (status === 'Connected' && eth_pubkey) {
           // Check if the wallet is a MetaMask wallet
           if (wallet?.type.toLowerCase() === 'metamask') {
-            const metaMaskWalletAddress = eth_pubkey;
-            const matchedData = headstashData.find((data) => data.address === metaMaskWalletAddress);
+            const matchedData = headstashData.find((data) => data.address === eth_pubkey);
 
             if (matchedData) {
               // Set the amount from the matched data
@@ -101,15 +100,15 @@ export default function Headstash() {
       }
     };
 
-    void fetchHeadstashData(address);
+    void fetchHeadstashData(eth_pubkey);
   }, [status, eth_pubkey, wallet]);
 
   // Fetch and set the Headstash amount when verification details are available
   useEffect(() => {
     // Check if verification details exist
     if (verificationDetails && verificationDetails.address) {
-      const verificationAddress = verificationDetails.address;
-      const matchedData = headstashData.find((data) => data.address === verificationAddress);
+    
+      const matchedData = headstashData.find((data) => data.address === eth_pubkey);
 
       if (matchedData) {
         // Set the amount from the matched data
@@ -123,9 +122,9 @@ export default function Headstash() {
 
 
   // Function to fetch Headstash data
-  const fetchHeadstashData = (address) => {
+  const fetchHeadstashData = (address: string) => {
     if (address) {
-      const matchedData = headstashData.find((data) => data.address === address);
+      const matchedData = headstashData.find((data) => data.address === eth_pubkey);
 
       if (matchedData) {
         // Set the amount from the matched data
@@ -510,19 +509,19 @@ export default function Headstash() {
               </button>
               <div></div>
               {verificationDetails ? (
-                <Badge className="verification-details-badge">
+                <Badge >
                   <p>Signature Hash: {verificationDetails.signatureHash}</p>
                 </Badge>
               ) : null}
               <div></div>
               {verificationDetails ? (
-                <Badge className="verification-details-badge">
+                <Badge>
                   <p>Address: {verificationDetails.address}</p>
                 </Badge>
               ) : null}
               <div></div>
               {verificationDetails ? (
-                <Badge className="verification-details-badge">
+                <Badge>
                   <p>Timestamp: {verificationDetails.timestamp}</p>
                 </Badge>
               ) : null}

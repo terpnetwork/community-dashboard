@@ -1,5 +1,10 @@
-export const headstashData = [
-    [{ "address": "0xeffb61a74238c5bdec0f5c2904960c3e2a679ab5", "amount": "34093755162"},
+interface HeadstashData {
+    address: string;
+    amount: string;
+  }
+
+export const headstashData: HeadstashData[] = [
+   { "address": "0xeffb61a74238c5bdec0f5c2904960c3e2a679ab5", "amount": "34093755162"},
     { "address": "0x254768d47cf8958a68242ce5aa1adb401e1fef2b", "amount": "32328207654"},
     { "address": "0xfcd67eee80f7abfabdf456ae4ebe8c3e040f4545", "amount": "25162238483"},
     { "address": "0x01b684806577d94a1769535f353fb13eb75e6d51", "amount": "23365785814"},
@@ -12581,4 +12586,4 @@ export const headstashData = [
     { "address": "0xffda881000714677d31ecb2744ebbfed75b4f8bd", "amount": "1061678463"},
     { "address": "0xffdc52b54f14e04e66768d86eab5554f08061139", "amount": "1061678463"}
     ]
-];
+;
