@@ -44,7 +44,7 @@ export default function Home() {
   const getGlobalbutton = () => {
     if (globalStatus === "Connecting") {
       return (
-        <Button variant="outlined" onClick={() => connect()}>
+        <Button  onClick={() => connect()}>
           <PaperPlaneIcon className="mr-2 h-4 w-4" />
           {`Connecting ${wallet?.prettyName}`}
         </Button>
@@ -53,19 +53,19 @@ export default function Home() {
     if (globalStatus === "Connected") {
       return (
         <>
-          <Button variant="outlined" size="sm" onClick={() => openView()}>
+          <Button  size="sm" onClick={() => openView()}>
             <div className="flex justify-center items-center space-x-2">
               <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-500 leading-4 mb-2" />
               <span>Connected to: {wallet?.prettyName}</span>
             </div>
           </Button>
 
-          <Badge className="flex" variant="outline">
+          <Badge className="flex">
             Account name: {username}
           </Badge>
 
           <Button
-            variant="outlined"
+           
             onClick={async () => {
               await disconnect();
               // setGlobalStatus(WalletStatus.Disconnected);

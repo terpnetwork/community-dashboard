@@ -13,6 +13,7 @@ import { SignedMessage } from "@/contracts/headstash";
 import MerkleProofGenerator from "@/utils/proof/generateProofs";
 import { headstashData } from '../api/headstashData';
 import sha256 from 'crypto-js/sha256';
+import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
 
 const chainNames_1 = ["terpnetwork"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
@@ -42,6 +43,8 @@ export default function Headstash() {
   const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
   const [account, setAccount] = useState('');
   const [amount, setAmount] = useState('');
+  const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
+  const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
   // Function to set the wallet address when it's available
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
@@ -328,12 +331,12 @@ export default function Headstash() {
     if (globalStatus === "Connected") {
       return (
         <>
-          <Button size="sm" onClick={() => openView()}>
+          {/* <Button size="sm" onClick={() => openView()}>
             <div className="flex justify-center items-center space-x-2">
               <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-500 leading-4 mb-2" />
               <span>Connected to: {wallet?.prettyName}</span>
             </div>
-          </Button>
+          </Button> */}
 
           <Badge className="flex">
             Account name: {username}
@@ -342,16 +345,25 @@ export default function Headstash() {
             Account name: {address}
           </Badge>
 
-          <Button
+          <button
+           style={{
+            width: '260px',
+            padding: '12px',
+            backgroundColor: '#FF0000',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
 
             onClick={async () => {
               await disconnect();
               // setGlobalStatus(WalletStatus.Disconnected);
             }}
           >
-            <ResetIcon className="mr-2 h-4 w-4" />
+          
             Disconnect
-          </Button>
+          </button>
         </>
       );
     }
@@ -359,10 +371,18 @@ export default function Headstash() {
     return (
       <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
 
-        <Button
+        <button
           onClick={() => connect()}
-
-        >View Compatible Wallets</Button>
+          style={{
+            width: '260px',
+            padding: '12px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >Connect</button>
       </div>
     );
   };;
@@ -383,49 +403,25 @@ export default function Headstash() {
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>  <Text
-                fontSize={{
-                  base: "4xl",
-                  sm: "5xl",
-                  md: "6xl",
-                }}
-                display={{
-                  base: "block",
-                  lg: "inline",
-                }}
-                w="full"
-                bgClip="text"
-                bgGradient="linear(to-r, green.400,purple.500)"
-                fontWeight="extrabold"
-              >1</Text></h1>
-              <h1>Connect Metamask </h1>
-              <p>Verify your headstash allocation.</p>
+              <h1>  <PageHeaderHeading>1</PageHeaderHeading></h1>
+              <PageHeaderDescription>Connect Metamask </PageHeaderDescription>
               <br />
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
-              <h2>Your Headstash Amount:{amount !== '' ? amount : 'Loading...'}</h2>
+              <br />
+              <h2>Your Headstash Amount:</h2>
+            {amount !== '' ? formattedTerpAmount  : 'Loading...'}
+      
             </div>
+            {amount !== '' ? formattedThiolAmount  : 'Loading...'}
           </div>
         </div>
+        
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
               <h1>
-                <Text
-                  fontSize={{
-                    base: "4xl",
-                    sm: "5xl",
-                    md: "6xl",
-                  }}
-                  display={{
-                    base: "block",
-                    lg: "inline",
-                  }}
-                  w="full"
-                  bgClip="text"
-                  bgGradient="linear(to-r, green.400,purple.500)"
-                  fontWeight="extrabold"
-                >2</Text></h1>
-              <h1>Connect Cosmos Wallet</h1>
+              <PageHeaderHeading>2</PageHeaderHeading></h1>
+              <PageHeaderDescription>Connect Cosmos Wallet</PageHeaderDescription>
               <br />
               {getGlobalbutton()}
 
@@ -436,22 +432,8 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
               <h1>
-                <Text
-                  fontSize={{
-                    base: "4xl",
-                    sm: "5xl",
-                    md: "6xl",
-                  }}
-                  display={{
-                    base: "block",
-                    lg: "inline",
-                  }}
-                  w="full"
-                  bgClip="text"
-                  bgGradient="linear(to-r, green.400,purple.500)"
-                  fontWeight="extrabold"
-                >3</Text></h1>
-              <h1>Verify Metamask Ownership</h1>
+              <PageHeaderHeading>3</PageHeaderHeading></h1>
+              <PageHeaderDescription>Verify Metamask Ownership</PageHeaderDescription>
               <p>A signed message will verify you own your wallet.</p>
               <br />
               <button
@@ -467,7 +449,7 @@ export default function Headstash() {
                 onClick={handlePersonalSign}
                 disabled={isVerified}
               >
-                Verify!
+                Sign & Verify
               </button>
               <div></div>
               {verificationDetails ? (
@@ -495,22 +477,8 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
               <h1>
-                <Text
-                  fontSize={{
-                    base: "4xl",
-                    sm: "5xl",
-                    md: "6xl",
-                  }}
-                  display={{
-                    base: "block",
-                    lg: "inline",
-                  }}
-                  w="full"
-                  bgClip="text"
-                  bgGradient="linear(to-r, green.400,purple.500)"
-                  fontWeight="extrabold"
-                >4</Text></h1>
-              <h1> Generate Proof's</h1>
+                <PageHeaderHeading>4</PageHeaderHeading></h1>
+              <PageHeaderDescription> Generate Proof's</PageHeaderDescription>
               <p></p>
               <br />
               {/* <button onClick={handleGenerateProof}>Generate Merkle Proof</button> */}
@@ -522,22 +490,8 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
               <h1>
-                <Text
-                  fontSize={{
-                    base: "4xl",
-                    sm: "5xl",
-                    md: "6xl",
-                  }}
-                  display={{
-                    base: "block",
-                    lg: "inline",
-                  }}
-                  w="full"
-                  bgClip="text"
-                  bgGradient="linear(to-r, green.400,purple.500)"
-                  fontWeight="extrabold"
-                >5</Text></h1>
-              <h1> Claim Airdrop </h1>
+                <PageHeaderHeading>5</PageHeaderHeading></h1>
+              <PageHeaderDescription> Claim Airdrop </PageHeaderDescription>
               <p></p>
               {/* Claim Headstash Button
                            <Button
