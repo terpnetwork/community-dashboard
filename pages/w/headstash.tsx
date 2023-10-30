@@ -12,8 +12,10 @@ import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import MerkleProofGenerator from "@/utils/proof/generateProofs";
 import { headstashData } from '../api/headstashData';
-import amount from '../api/headstashData';
+import sha256 from 'crypto-js/sha256';
+
 const chainNames_1 = ["terpnetwork"];
+const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
 
 
@@ -39,7 +41,7 @@ export default function Headstash() {
   const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
   const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
   const [account, setAccount] = useState('');
-
+  const [amount, setAmount] = useState('');
   // Function to set the wallet address when it's available
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
@@ -50,7 +52,6 @@ export default function Headstash() {
   const transactionMessage =
     headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs, signedMessage) || null;
 
-  const [amount, setAmount] = useState(''); // State to hold the Headstash amount
   const [verificationDetails, setVerificationDetails] = useState(() => {
     try {
       // Load verification details from local storage if on the client side
@@ -78,10 +79,7 @@ export default function Headstash() {
     const fetchHeadstashData = async (eth_pubkey: string) => {
       try {
         if (status === 'Connected' && eth_pubkey) {
-          // Check if the wallet is a MetaMask wallet
-          if (wallet?.type.toLowerCase() === 'metamask') {
             const matchedData = headstashData.find((data) => data.address === eth_pubkey);
-
             if (matchedData) {
               // Set the amount from the matched data
               setAmount(matchedData.amount);
@@ -89,10 +87,6 @@ export default function Headstash() {
               // Handle the case when no matching data is found
               setAmount('No data found for this MetaMask wallet');
             }
-          } else {
-            // Handle other wallet types if needed
-            setAmount('Unsupported wallet type');
-          }
         }
       } catch (error) {
         console.error('Error fetching Headstash data:', error);
@@ -121,28 +115,6 @@ export default function Headstash() {
   }, [verificationDetails]);
 
 
-  // Function to fetch Headstash data
-  const fetchHeadstashData = (address: string) => {
-    if (address) {
-      const matchedData = headstashData.find((data) => data.address === eth_pubkey);
-
-      if (matchedData) {
-        // Set the amount from the matched data
-        setAmount(matchedData.amount);
-      } else {
-        // Handle the case when no matching data is found
-        setAmount('No data found for this wallet');
-      }
-    }
-  };
-
-  // Fetch and set the Headstash amount when the wallet is connected
-  useEffect(() => {
-    if (status === 'Connected' && address) {
-      fetchHeadstashData(address);
-    }
-  }, [status, address]);
-
   // if cosmos wallet not connected, connect.
   useEffect(() => {
     try {
@@ -159,9 +131,15 @@ export default function Headstash() {
   // set the signed claim message. 
   useEffect(() => {
     setSignedMessage({ claim_msg: claimMsg, signature })
-  }, [signature, claimMsg])
+  }, [signature, claimMsg])  
 
-  // get headstash info.  [including proofs]     
+
+  // create a merkleTree leaf instance
+  const leaf = sha256(eth_pubkey + amount).toString(); 
+  console.log(leaf);
+
+
+  // get headstash info.     
   // useEffect(() => {
   //   const getHeadstashInfo = async () => {
   //     try {
@@ -238,25 +216,7 @@ export default function Headstash() {
   //   }
   // }
 
-  // suggest token to keplr message. *prob not needed*
-  // const addToken = async () => {
-  //   try {
-  //     if (!window.getOfflineSigner) {
-  //       throw new Error('Keplr extension is not available')
-  //     }
-
-  //     const config = getConfig(NETWORK)
-
-  //     await window.keplr?.suggestToken(config.chainId, cw20TokenAddress)
-  //   } catch (err: any) {
-  //     setLoading(false)
-  //     toast.error(err.message, {
-  //       style: { maxWidth: 'none' },
-  //     })
-  //   }
-  // }
-
-
+// Connect Metamask on page arrival
   useEffect(() => {
     const fn = async () => {
       await mainWallet?.connect();
@@ -265,6 +225,7 @@ export default function Headstash() {
   }, []);
 
   if (!isClient) return null;
+
 
   // eth message signing logic
   const messageToSign = async ({ message, setError }) => {
@@ -553,6 +514,7 @@ export default function Headstash() {
               <p></p>
               <br />
               {/* <button onClick={handleGenerateProof}>Generate Merkle Proof</button> */}
+              {/* <div>Proof: {proof}</div> */}
             </div>
           </div>
         </div>

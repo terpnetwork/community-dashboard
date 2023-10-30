@@ -2,7 +2,7 @@
 import sha256 from 'crypto-js/sha256'
 import { MerkleTree } from 'merkletreejs';
 
-class Airdrop {
+class HeadstashProof {
   private tree: MerkleTree;
 
   constructor(accounts: Array<{ address: string; amount: string }>) {
@@ -42,4 +42,4 @@ class Airdrop {
   }
 }
 
-export {Airdrop}
+export {HeadstashProof}
