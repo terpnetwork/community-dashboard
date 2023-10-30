@@ -10,8 +10,7 @@ import { ethers } from "ethers";
 import router, { useRouter } from "next/router";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
-import MerkleProofGenerator from "@/utils/proof/generateProofs";
-import { headstashData } from '../api/headstashData';
+import { headstashData } from '../../lib/headstash/headstashData';
 import sha256 from 'crypto-js/sha256';
 import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
 
@@ -34,7 +33,7 @@ export default function Headstash() {
   const [eth_pubkey, setEthPubkey] = useState('')
   const [eth_sig, setEthSig] = useState('')
   const [loading, setLoading] = useState(false)
-  const [proofs, setProofs] = useState<string[]>([''])
+  const [proofs] = useState<string[]>([''])
   const [name, setName] = useState('')
   const [cw20TokenAddress, setCW20TokenAddress] = useState('')
   const [balance, setBalance] = useState(0)
@@ -137,51 +136,69 @@ export default function Headstash() {
   }, [signature, claimMsg])  
 
 
-  // create a merkleTree leaf instance
-  const leaf = sha256(eth_pubkey + amount).toString(); 
-  console.log(leaf);
+  async function setProofs(csvFileURL, eth_pubkey) {
+    const response = await fetch(csvFileURL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV file: ${response.status} ${response.statusText}`);
+    }
+  
+    const csvText = await response.text();
+  
+    const proofs = [];
+  
+    const rows = csvText.split('\n');
+    const headers = rows[0].split(',');
+  
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i].split(',');
+      if (row[headers.indexOf('address')] === eth_pubkey) {
+        proofs.push({
+          address: row[headers.indexOf('address')],
+          amount: row[headers.indexOf('amount')],
+          proof: row[headers.indexOf('proof')],
+        });
+      }
+    }
+  
+    return proofs;
+  }
 
 
-  // get headstash info.     
-  // useEffect(() => {
-  //   const getHeadstashInfo = async () => {
-  //     try {
-  //       if ( status === 'Disconnected' || contractAddress === '') return
+//  // get headstash info.     
+//   useEffect(() => {
+//     const getHeadstashInfo = async () => {
+//       try {
+//         if ( status === 'Disconnected' || contractAddress === '') return
 
-  //       const headstashAirdropContractMessages = headstashAirdropContract?.use(contractAddress)
+//         const headstashAirdropContractMessages = headstashAirdropContract?.use(contractAddress)
 
-  //       const headstash = await getHeadstash(contractAddress)
+//         const headstash = await getHeadstash(contractAddress)
 
-  //       const address =  wallet.address
+//         setProofs(csvFileURL, eth_pubkey)
+//         .then((proofs) => {
+//           if (proofs.length > 0) {
+//             console.log('Proofs found for address:', eth_pubkey);
+//             console.log(proofs);
+//           } else {
+//             console.log('No proofs found for address:', eth_pubkey);
+//           }
+//         })
+//         .catch((error) => {
+//           console.error('Error:', error);
+//         });
 
-  //       const { data } = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/proofs/contract/${contractAddress}/wallet/${address}`,
-  //       )
-  //       const { account } = data
-  //       if (account) {
-  //         // eslint-disable-next-line @typescript-eslint/no-shadow
-  //         const stage = await headstashAirdropContractMessages?.getLatestStage()
-  //         const isClaimed = await headstashAirdropContractMessages?.isClaimed(address, stage || 0)
+    
+    
+//       } catch (err: any) {
+//         setLoading(false)
+//         toast.error(err.message, {
+//           style: { maxWidth: 'none' },
+//         })
+//       }
+//     }
 
-  //         setProofs(account.proofs)
-  //         setAmount((account.amount as number).toString())
-  //         setName(headstash.name)
-
-  //         if (isClaimed) setHeadstashState('claimed')
-  //         else setHeadstashState('not_claimed')
-  //       } else {
-  //         setHeadstashState('no_allocation')
-  //       }
-  //     } catch (err: any) {
-  //       setLoading(false)
-  //       toast.error(err.message, {
-  //         style: { maxWidth: 'none' },
-  //       })
-  //     }
-  //   }
-
-  //   void getHeadstashInfo()
-  // }, [contractAddress, wallet.address, wallet.initialized, wallets[0]?.terraAddress])
+//     void getHeadstashInfo()
+//   }, [contractAddress, eth_pubkey])
 
 
   // get the latest stage of the headstash airdrop .
@@ -228,7 +245,6 @@ export default function Headstash() {
   }, []);
 
   if (!isClient) return null;
-
 
   // eth message signing logic
   const messageToSign = async ({ message, setError }) => {
