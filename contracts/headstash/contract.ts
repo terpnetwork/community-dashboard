@@ -2,10 +2,10 @@ import { toUtf8 } from '@cosmjs/encoding'
 import type { Coin } from '@cosmjs/proto-signing'
 import { coin } from '@cosmjs/proto-signing'
 import { getConfig as getNetworkConfig } from '@/config/network'
-import {SigningCosmWasmClient } from '@cosmos-kit/core'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { NETWORK, getExecuteFee } from '@/lib/utils'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 
 // TODO: Split messages into a different file and import

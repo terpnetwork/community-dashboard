@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Text } from "@interchain-ui/react"
 import { useChain, useWallet } from "@cosmos-kit/react";
 import MetamaskConnectButton from "../../components/wallet/metamask-connect-button";
-import {  PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
+import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import { Badge } from "@/components/ui/badge"
 import { useIsClient } from "@/hooks";
 import { toast } from 'react-hot-toast'
@@ -11,7 +11,7 @@ import router, { useRouter } from "next/router";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import { headstashData } from '../../lib/headstash/headstashData';
-import sha256 from 'crypto-js/sha256';
+import { proofData } from '../../lib/headstash/proofData';
 import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
 
 const chainNames_1 = ["terpnetwork"];
@@ -33,7 +33,7 @@ export default function Headstash() {
   const [eth_pubkey, setEthPubkey] = useState('')
   const [eth_sig, setEthSig] = useState('')
   const [loading, setLoading] = useState(false)
-  const [proofs] = useState<string[]>([''])
+  const [proofs, setProofs] = useState<string[]>([''])
   const [name, setName] = useState('')
   const [cw20TokenAddress, setCW20TokenAddress] = useState('')
   const [balance, setBalance] = useState(0)
@@ -52,7 +52,7 @@ export default function Headstash() {
 
   const contractAddress = String(router.query.address);
   const transactionMessage =
-    headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs, signedMessage) || null;
+    headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs.join(', '), signedMessage) || null;
 
   const [verificationDetails, setVerificationDetails] = useState(() => {
     try {
@@ -81,14 +81,14 @@ export default function Headstash() {
     const fetchHeadstashData = async (eth_pubkey: string) => {
       try {
         if (status === 'Connected' && eth_pubkey) {
-            const matchedData = headstashData.find((data) => data.address === eth_pubkey);
-            if (matchedData) {
-              // Set the amount from the matched data
-              setAmount(matchedData.amount);
-            } else {
-              // Handle the case when no matching data is found
-              setAmount('No data found for this MetaMask wallet');
-            }
+          const matchedData = headstashData.find((data) => data.address === eth_pubkey);
+          if (matchedData) {
+            // Set the amount from the matched data
+            setAmount(matchedData.amount);
+          } else {
+            // Handle the case when no matching data is found
+            setAmount('No data found for this MetaMask wallet');
+          }
         }
       } catch (error) {
         console.error('Error fetching Headstash data:', error);
@@ -99,23 +99,32 @@ export default function Headstash() {
     void fetchHeadstashData(eth_pubkey);
   }, [status, eth_pubkey, wallet]);
 
-  // Fetch and set the Headstash amount when verification details are available
   useEffect(() => {
-    // Check if verification details exist
-    if (verificationDetails && verificationDetails.address) {
-    
-      const matchedData = headstashData.find((data) => data.address === eth_pubkey);
-
-      if (matchedData) {
-        // Set the amount from the matched data
-        setAmount(matchedData.amount);
-      } else {
-        // Handle the case when no matching data is found
-        setAmount('No data found for this verification address');
+    // Function to fetch and set proofs
+    const fetchProofs = async (eth_pubkey: string) => {
+      try {
+        if (status === 'Connected' && eth_pubkey) {
+          const matchedData = proofData.find((data) => data.address === eth_pubkey);
+          if (matchedData) {
+            setProofs(matchedData.proof);
+            console.log(proofs)
+          } else {
+            setProofs('No proofs were found');
+            console.log(proofs)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching Proof data', error);
+        setProofs('Error fetching data');
       }
-    }
-  }, [verificationDetails]);
+    };
+    void fetchProofs(eth_pubkey);
+  }, [status, eth_pubkey, wallet]);
 
+  // Function to reset the proofs state
+  const resetProofs = () => {
+    setProofs('');
+  };
 
   // if cosmos wallet not connected, connect.
   useEffect(() => {
@@ -133,72 +142,33 @@ export default function Headstash() {
   // set the signed claim message. 
   useEffect(() => {
     setSignedMessage({ claim_msg: claimMsg, signature })
-  }, [signature, claimMsg])  
+  }, [signature, claimMsg])
 
 
-  async function setProofs(csvFileURL, eth_pubkey) {
-    const response = await fetch(csvFileURL);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch CSV file: ${response.status} ${response.statusText}`);
-    }
-  
-    const csvText = await response.text();
-  
-    const proofs = [];
-  
-    const rows = csvText.split('\n');
-    const headers = rows[0].split(',');
-  
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i].split(',');
-      if (row[headers.indexOf('address')] === eth_pubkey) {
-        proofs.push({
-          address: row[headers.indexOf('address')],
-          amount: row[headers.indexOf('amount')],
-          proof: row[headers.indexOf('proof')],
-        });
-      }
-    }
-  
-    return proofs;
-  }
 
 
-//  // get headstash info.     
-//   useEffect(() => {
-//     const getHeadstashInfo = async () => {
-//       try {
-//         if ( status === 'Disconnected' || contractAddress === '') return
+  //  // get headstash info.     
+  //   useEffect(() => {
+  //     const getHeadstashInfo = async () => {
+  //       try {
+  //         if ( status === 'Disconnected' || contractAddress === '') return
 
-//         const headstashAirdropContractMessages = headstashAirdropContract?.use(contractAddress)
+  //         const headstashAirdropContractMessages = headstashAirdropContract?.use(contractAddress)
 
-//         const headstash = await getHeadstash(contractAddress)
+  //         const headstash = await getHeadstash(contractAddress)
 
-//         setProofs(csvFileURL, eth_pubkey)
-//         .then((proofs) => {
-//           if (proofs.length > 0) {
-//             console.log('Proofs found for address:', eth_pubkey);
-//             console.log(proofs);
-//           } else {
-//             console.log('No proofs found for address:', eth_pubkey);
-//           }
-//         })
-//         .catch((error) => {
-//           console.error('Error:', error);
-//         });
+  //       
 
-    
-    
-//       } catch (err: any) {
-//         setLoading(false)
-//         toast.error(err.message, {
-//           style: { maxWidth: 'none' },
-//         })
-//       }
-//     }
+  //       } catch (err: any) {
+  //         setLoading(false)
+  //         toast.error(err.message, {
+  //           style: { maxWidth: 'none' },
+  //         })
+  //       }
+  //     }
 
-//     void getHeadstashInfo()
-//   }, [contractAddress, eth_pubkey])
+  //     void getHeadstashInfo()
+  //   }, [contractAddress, eth_pubkey])
 
 
   // get the latest stage of the headstash airdrop .
@@ -236,7 +206,7 @@ export default function Headstash() {
   //   }
   // }
 
-// Connect Metamask on page arrival
+  // Connect Metamask on page arrival
   useEffect(() => {
     const fn = async () => {
       await mainWallet?.connect();
@@ -362,22 +332,22 @@ export default function Headstash() {
           </Badge>
 
           <button
-           style={{
-            width: '260px',
-            padding: '12px',
-            backgroundColor: '#FF0000',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
+            style={{
+              width: '260px',
+              padding: '12px',
+              backgroundColor: '#FF0000',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
 
             onClick={async () => {
               await disconnect();
               // setGlobalStatus(WalletStatus.Disconnected);
             }}
           >
-          
+
             Disconnect
           </button>
         </>
@@ -425,18 +395,17 @@ export default function Headstash() {
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
               <br />
               <h2>Your Headstash Amount:</h2>
-            {amount !== '' ? formattedTerpAmount  : 'Loading...'}
-      
+              {amount !== '' ? formattedTerpAmount : 'Loading...'}
+
             </div>
-            {amount !== '' ? formattedThiolAmount  : 'Loading...'}
+            {amount !== '' ? formattedThiolAmount : 'Loading...'}
           </div>
         </div>
-        
+
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>
-              <PageHeaderHeading>2</PageHeaderHeading></h1>
+              <PageHeaderHeading>2</PageHeaderHeading>
               <PageHeaderDescription>Connect Cosmos Wallet</PageHeaderDescription>
               <br />
               {getGlobalbutton()}
@@ -447,8 +416,7 @@ export default function Headstash() {
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>
-              <PageHeaderHeading>3</PageHeaderHeading></h1>
+              <PageHeaderHeading>3</PageHeaderHeading>
               <PageHeaderDescription>Verify Metamask Ownership</PageHeaderDescription>
               <p>A signed message will verify you own your wallet.</p>
               <br />
@@ -489,31 +457,28 @@ export default function Headstash() {
             </div>
           </div>
         </div>
+
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>
-                <PageHeaderHeading>4</PageHeaderHeading></h1>
-              <PageHeaderDescription> Generate Proof's</PageHeaderDescription>
-              <p></p>
-              <br />
-              {/* <button onClick={handleGenerateProof}>Generate Merkle Proof</button> */}
-              {/* <div>Proof: {proof}</div> */}
-            </div>
-          </div>
-        </div>
-        <div className="steps-card">
-          <div className="inner-card">
-            <div className="step-one-card">
-              <h1>
-                <PageHeaderHeading>5</PageHeaderHeading></h1>
+
+              <PageHeaderHeading>4</PageHeaderHeading>
               <PageHeaderDescription> Claim Airdrop </PageHeaderDescription>
               <p></p>
-              {/* Claim Headstash Button
-                           <Button
-                            onClick={claim}>
-                    {headstashState === 'claimed' ? 'Headstash Claimed' : 'Claim Headstash'}
-                            </Button> */}
+              <button
+                style={{
+                  width: '260px',
+                  padding: '12px',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              // onClick={claim}
+              >
+                {headstashState === 'claimed' ? 'Headstash Claimed' : 'Claim Headstash'}
+              </button>
               <br />
 
 
