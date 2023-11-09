@@ -10,7 +10,7 @@ export function RootLayout({ children }: RootLayoutProps) {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="bg-background text-foreground relative">
         <div className="absolute right-10 top-10 p-10 ">
-          <ModeToggle />
+
         </div>
         {children}
       </div>

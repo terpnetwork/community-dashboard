@@ -6,6 +6,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/utils/page-header"
+import {DemoDatePicker} from "@/components/utils/to-headstash" 
 import { Separator } from "@/components/ui/separator"
 import { ArrowRightIcon, PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
@@ -92,7 +93,7 @@ export default function Home() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 `}
+      className="home-head"
     >
        <PageHeader className="pb-8">
         <Link
@@ -126,57 +127,21 @@ export default function Home() {
 
           
         </div>
-      </PageHeader>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-       <Card className="min-w-[350px] max-w-[800px] mt-20 mx-auto p-10">
-      <CardHeader>
-        <CardTitle>
-          <p className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            Connect with a Cosmos Compatible Wallet
-          </p>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="flex justify-start space-x-5"></div>
-        {getGlobalbutton()}
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-     
-        </h2>
-        {chainNames_1.map((chainName) => (
-          <ChainWalletCard
-            key={chainName}
-            type="address-in-modal"
-            chainName={chainName}
-          />
-        ))}
-       
-        {chainNames_2.map((chainName) => (
-          <ChainWalletCard
-            key={chainName}
-            type="address-on-page"
-            chainName={chainName}
-          />
-        ))}
-      </CardContent>
-    </Card>
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+        <div className="mb-32 grid text-center lg:max-w-5xl lg:grid-cols-4 lg:text-left">
         <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           target="_blank"
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Templates{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Terp Network API's.
+           Reverse engineer existing widgets, & customize them to your needs!
           </p>
         </a>
 
@@ -198,19 +163,19 @@ export default function Home() {
         </a>
 
         <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
+          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           target="_blank"
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Docs{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-           Reverse engineer existing widgets, & customize them to your needs!
+            Find in-depth information about Terp Network API's.
           </p>
         </a>
 
@@ -221,7 +186,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Repo {' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -231,6 +196,11 @@ export default function Home() {
           </p>
         </a>
       </div>
+      
+      <DemoDatePicker />
+      </PageHeader>
+
+  
     </main>
   )
 }

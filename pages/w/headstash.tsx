@@ -28,22 +28,23 @@ export default function Headstash() {
   const { status: globalStatus, mainWallet } = useWallet(); // status here is the global wallet status for all activated chains (chain is activated when call useChain)
   const isClient = useIsClient();
   const headstashAirdropContract = useContracts().headstashAirdrop
-  const [signature, setSignature] = useState('')
-  const [claimMsg, setClaimMsg] = useState('')
-  const [eth_pubkey, setEthPubkey] = useState('')
-  const [eth_sig, setEthSig] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [proofs, setProofs] = useState<string[]>([''])
-  const [name, setName] = useState('')
-  const [cw20TokenAddress, setCW20TokenAddress] = useState('')
-  const [balance, setBalance] = useState(0)
-  const [stage, setStage] = useState(0)
-  const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
-  const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
   const [account, setAccount] = useState('');
   const [amount, setAmount] = useState('');
+  const [balance, setBalance] = useState(0)
+  const [claimMsg, setClaimMsg] = useState('')
+  const [cw20TokenAddress, setCW20TokenAddress] = useState('')
+  const [eth_pubkey, setEthPubkey] = useState('')
+  const [eth_sig, setEthSig] = useState('')
   const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
   const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
+  const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
+  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState('')
+  const [proofs, setProofs] = useState<string[]>([''])
+  const [signature, setSignature] = useState('')
+  const [stage, setStage] = useState(0)
+  const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
+
   // Function to set the wallet address when it's available
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
@@ -87,12 +88,11 @@ export default function Headstash() {
             setAmount(matchedData.amount);
           } else {
             // Handle the case when no matching data is found
-            setAmount('No data found for this MetaMask wallet');
+            setAmount('')
           }
         }
       } catch (error) {
-        console.error('Error fetching Headstash data:', error);
-        setAmount('Error fetching data');
+        setAmount('fetch if eligible error');
       }
     };
 
@@ -144,67 +144,6 @@ export default function Headstash() {
     setSignedMessage({ claim_msg: claimMsg, signature })
   }, [signature, claimMsg])
 
-
-
-
-  //  // get headstash info.     
-  //   useEffect(() => {
-  //     const getHeadstashInfo = async () => {
-  //       try {
-  //         if ( status === 'Disconnected' || contractAddress === '') return
-
-  //         const headstashAirdropContractMessages = headstashAirdropContract?.use(contractAddress)
-
-  //         const headstash = await getHeadstash(contractAddress)
-
-  //       
-
-  //       } catch (err: any) {
-  //         setLoading(false)
-  //         toast.error(err.message, {
-  //           style: { maxWidth: 'none' },
-  //         })
-  //       }
-  //     }
-
-  //     void getHeadstashInfo()
-  //   }, [contractAddress, eth_pubkey])
-
-
-  // get the latest stage of the headstash airdrop .
-  // useEffect(() => {
-  //   if (!headstashAirdropContract || contractAddress === '') return
-
-  //   void headstashAirdropContract.use(contractAddress)?.getLatestStage().then(setStage)
-  // }, [headstashAirdropContract, contractAddress])
-
-  // claim headstash message.
-  // const claim = async () => {
-  //   try {
-  //     if (status === 'Disconnected') return toast.error('Please connect your wallet!')
-  //     if (!headstashAirdropContract) return toast.error('Could not connect to smart contract')
-
-  //     setLoading(true)
-
-  //     const contractMessages = headstashAirdropContract.use(contractAddress)
-
-  //     let signedMsg = setSignedMessage(signedMessage)
-
-  //     await contractMessages?.claim(stage, amount, eth_pubkey, eth_sig, proofs, signedMsg)
-
-  //     setLoading(false)
-  //     setHeadstashState('claimed')
-  //     toast.success('Successfully claimed the airdrop!', {
-  //       style: { maxWidth: 'none' },
-  //     })
-  //     setBalance(balance + parseInt(amount))
-  //   } catch (err: any) {
-  //     setLoading(false)
-  //     toast.error(err.message, {
-  //       style: { maxWidth: 'none' },
-  //     })
-  //   }
-  // }
 
   // Connect Metamask on page arrival
   useEffect(() => {
@@ -260,6 +199,7 @@ export default function Headstash() {
     if (sig) {
       props.onSubmit(sig);
     }
+    
   };
 
   // Handle personal_sign
@@ -304,6 +244,16 @@ export default function Headstash() {
     }
   };
 
+  // trunicate sig to display 
+  function truncateString(str) {
+    if (str && str.length >= 10) {
+      const firstFive = str.slice(0, 5);
+      const lastFive = str.slice(-5);
+      return firstFive + "..." + lastFive;
+    }
+    return str; // Return the original string if it's too short to truncate
+  }
+
   // cosmos wallet connect
   const getGlobalbutton = () => {
     if (globalStatus === "Connecting") {
@@ -316,20 +266,11 @@ export default function Headstash() {
     }
     if (globalStatus === "Connected") {
       return (
-        <>
-          {/* <Button size="sm" onClick={() => openView()}>
-            <div className="flex justify-center items-center space-x-2">
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-500 leading-4 mb-2" />
-              <span>Connected to: {wallet?.prettyName}</span>
-            </div>
-          </Button> */}
-
-          <Badge className="flex">
-            Account name: {username}
-          </Badge>
-          <Badge className="flex">
-            Account name: {address}
-          </Badge>
+        <>   
+          <h2 className="flex ">
+            Cosmos PubKey: <br/> {address}
+          </h2>
+          <br/>
 
           <button
             style={{
@@ -356,7 +297,6 @@ export default function Headstash() {
 
     return (
       <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
-
         <button
           onClick={() => connect()}
           style={{
@@ -382,31 +322,32 @@ export default function Headstash() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 `}
+      className="claim-head"
     >
       <div className="steps-container">
 
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>  <PageHeaderHeading>1</PageHeaderHeading></h1>
-              <PageHeaderDescription>Connect Metamask </PageHeaderDescription>
+              <h1>  <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading></h1>
               <br />
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
               <br />
-              <h2>Your Headstash Amount:</h2>
-              {amount !== '' ? formattedTerpAmount : 'Loading...'}
-
+              <PageHeaderDescription>Your Headstash Amount: <br/> </PageHeaderDescription>
+              <h2 className="center">
+              {amount !== '' ? formattedTerpAmount : 'checking eligibility...'}
+               <br/>
+            {amount !== '' ? formattedThiolAmount : ''}
+            </h2>
             </div>
-            {amount !== '' ? formattedThiolAmount : 'Loading...'}
           </div>
         </div>
 
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <PageHeaderHeading>2</PageHeaderHeading>
-              <PageHeaderDescription>Connect Cosmos Wallet</PageHeaderDescription>
+              <PageHeaderHeading>2. Connect Cosmos Wallet</PageHeaderHeading>
+              <PageHeaderDescription></PageHeaderDescription>
               <br />
               {getGlobalbutton()}
 
@@ -416,8 +357,8 @@ export default function Headstash() {
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <PageHeaderHeading>3</PageHeaderHeading>
-              <PageHeaderDescription>Verify Metamask Ownership</PageHeaderDescription>
+              <PageHeaderHeading>3. Verify Metamask Ownership</PageHeaderHeading>
+              <PageHeaderDescription></PageHeaderDescription>
               <p>A signed message will verify you own your wallet.</p>
               <br />
               <button
@@ -436,23 +377,20 @@ export default function Headstash() {
                 Sign & Verify
               </button>
               <div></div>
+              <br/>
               {verificationDetails ? (
-                <Badge >
-                  <p>Signature Hash: {verificationDetails.signatureHash}</p>
-                </Badge>
+                <h2 >
+                  <p>Signature Hash: <br/> {truncateString(verificationDetails.signatureHash)}</p>
+                </h2>
               ) : null}
               <div></div>
               {verificationDetails ? (
-                <Badge>
-                  <p>Address: {verificationDetails.address}</p>
-                </Badge>
+                <h2>
+                  <p>Metamask PubKey:<br/> {verificationDetails.address}</p>
+                </h2>
               ) : null}
               <div></div>
-              {verificationDetails ? (
-                <Badge>
-                  <p>Timestamp: {verificationDetails.timestamp}</p>
-                </Badge>
-              ) : null}
+          
 
             </div>
           </div>
@@ -462,8 +400,8 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
 
-              <PageHeaderHeading>4</PageHeaderHeading>
-              <PageHeaderDescription> Claim Airdrop </PageHeaderDescription>
+              <PageHeaderHeading>4.  Claim Your Headstash</PageHeaderHeading>
+              <PageHeaderDescription> </PageHeaderDescription>
               <p></p>
               <button
                 style={{

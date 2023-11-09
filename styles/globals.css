@@ -25,3 +25,52 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.home-head {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  background: url(../public/background-image.svg) no-repeat center bottom;
+}
+
+.claim-head {
+  display: flex;
+  min-height: 100vh; /* Equivalent to min-h-screen for most use cases */
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  padding-bottom: 30px;
+  background: url(../public/background-image.svg) no-repeat center bottom;
+}
+
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px solid var(--color-purple);
+    border-radius: 31px;
+    flex-grow: 1;
+    padding: 1.98vw;
+    border-radius: 1.98vw;
+    background: #00000099;
+    max-width: 100%;
+    display: flex;
+}
+
+
+.steps-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+.inner-card {
+  padding: 18px;
+  border-radius: 20px;
+  display: flex;
+}
+

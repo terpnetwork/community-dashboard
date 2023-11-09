@@ -100,7 +100,16 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
 
   return (
     <div>
-      <button className="wallet-button" onClick={walletConnectHandler}>
+      <button style={{
+                  width: '260px',
+                  padding: '12px',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }} 
+      className="wallet-button" onClick={walletConnectHandler}>
         {eth_pubkey.length > 0 ? (
           String(eth_pubkey).substring(0, 6) +
           "..." +
