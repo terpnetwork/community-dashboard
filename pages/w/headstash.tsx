@@ -35,6 +35,7 @@ export default function Headstash() {
   const [cw20TokenAddress, setCW20TokenAddress] = useState('')
   const [eth_pubkey, setEthPubkey] = useState('')
   const [eth_sig, setEthSig] = useState('')
+  const [executionResult, setExecutionResult] = useState('');
   const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
   const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
   const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
@@ -44,16 +45,14 @@ export default function Headstash() {
   const [signature, setSignature] = useState('')
   const [stage, setStage] = useState(0)
   const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
+  const contractAddress = String(router.query.address);
+  const transactionMessage = headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs.join(', '), signedMessage) || null;
 
   // Function to set the wallet address when it's available
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
   };
 
-
-  const contractAddress = String(router.query.address);
-  const transactionMessage =
-    headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs.join(', '), signedMessage) || null;
 
   const [verificationDetails, setVerificationDetails] = useState(() => {
     try {
@@ -295,6 +294,54 @@ export default function Headstash() {
       );
     }
 
+   // claim headstash 
+  const executeContract = async () => {
+    try {
+      if (!offlineSigner) {
+        console.error("Offline signer not available");
+        return;
+      }
+
+      const contractAddress = "TODO";
+
+      // Log values before creating executeMsg
+      const executeMsg = {
+        claim: {
+          amount: amount,
+          proof: proofs,
+          eth_pubkey: eth_pubkey,
+          eth_sig: verificationDetails ? verificationDetails.signatureHash : '',
+        },
+      };
+
+      console.log("Execute Message:", executeMsg);
+
+      const msgExecute: MsgExecuteContract = {
+        typeUrl: "/cosmwasm.wasm.v1beta1.MsgExecuteContract",
+        value: {
+          sender: offlineSigner.senderAddress,
+          contract: contractAddress,
+          msg: toUtf8(JSON.stringify(executeMsg)),
+          funds: [],
+        },
+      };
+
+      const fee = {
+        amount: [{ denom: "uthiolx", amount: "8000" }],
+        gas: "500000",
+      };
+
+      const result = await offlineSigner.sendTokens(offlineSigner.senderAddress, offlineSigner.address, [fee], [msgExecute]);
+      assertIsBroadcastTxSuccess(result);
+
+      setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
+      console.log("Execution Result:", result);
+    } catch (error) {
+      setExecutionResult(`Error: ${error.message}`);
+      console.error("Execution Error:", error);
+    }
+  };
+
     return (
       <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
         <button
@@ -389,7 +436,15 @@ export default function Headstash() {
                   <p>Metamask PubKey:<br/> {verificationDetails.address}</p>
                 </h2>
               ) : null}
-              <div></div>
+              <br/>
+              <p>Merkle Proofs:</p>
+              <div class="proof-window">
+              {proofs ? (
+                <h2 >
+                  <p> <br/> {proofs}</p>
+                </h2>
+              ) : null}
+              </div>
           
 
             </div>

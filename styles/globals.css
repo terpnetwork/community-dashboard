@@ -74,3 +74,15 @@ body {
   display: flex;
 }
 
+.proof-window {
+  width: 300px; /* Set the desired width for the parent div */
+  border: 1px solid #ccc; /* Optional: Add a border for clarity */
+  border: 2px solid var(--color-purple);
+  border-radius: 4px;
+  overflow-x: auto; /* Add a horizontal scrollbar when necessary */
+}
+
+h2 {
+  white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
