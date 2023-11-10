@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   ],
   creator: "Terp Network Contributors",
     themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: light)", color: "black" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
@@ -89,15 +89,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   headers: {},
                 },
               ],
-            },
-            terra2: {
-              rpc: ["https://terra-rpc.lavenderfive.com/"],
-              rest: ["https://phoenix-lcd.terra.dev/"],
-            },
-            terra2testnet: {
-              rpc: ["https://terra-testnet-rpc.polkachu.com/"],
-              rest: ["https://pisco-lcd.terra.dev/"],
-            },
+            }
           },
         }}
         disableIframe={false}

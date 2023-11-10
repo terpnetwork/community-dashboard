@@ -455,9 +455,27 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
 
-              <PageHeaderHeading>4.  Claim Your Headstash</PageHeaderHeading>
-              <PageHeaderDescription> </PageHeaderDescription>
-              <p></p>
+              <PageHeaderHeading>4. Register FeeGrant & <br/> Claim Your Headstash</PageHeaderHeading>
+              <PageHeaderDescription> 
+                Transactions on Terp Network require fee's, <br/> We've got you covered for this one! 👍
+                 </PageHeaderDescription>
+              <br/>
+              <br/>
+              <button
+                style={{
+                  width: '200px',
+                  padding: '12px',
+                  marginRight: '4px',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              // onClick={feegrant}
+              >
+                {headstashState === 'claimed' ? 'Headstash Claimed' : ' a. Register FeeGrant'}
+              </button> 
               <button
                 style={{
                   width: '260px',
@@ -470,7 +488,7 @@ export default function Headstash() {
                 }}
               // onClick={claim}
               >
-                {headstashState === 'claimed' ? 'Headstash Claimed' : 'Claim Headstash'}
+                {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
               </button>
               <br />
 
