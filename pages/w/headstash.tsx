@@ -17,6 +17,14 @@ import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/pag
 import { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing"
 import { IndexedTx, SigningStargateClient, StargateClient } from "@cosmjs/stargate"
 import { error } from "console";
+import { toUtf8 } from "@cosmjs/encoding";
+import { coins, makeCosmoshubPath } from "@cosmjs/amino";
+import {
+  assertIsDeliverTxSuccess,
+  calculateFee,
+  GasPrice,
+  MsgSendEncodeObject,
+} from "@cosmjs/stargate"
 
 const chainNames_1 = ["terpnetwork"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
@@ -29,7 +37,6 @@ const getAliceSignerFromMnemonic = async (): Promise<OfflineDirectSigner> => {
     prefix: "terp",
   })
 }
-
 
 export default function Headstash() {
   const router = useRouter()
@@ -63,6 +70,24 @@ export default function Headstash() {
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
   };
+
+  // Connect Keplr on page arrival
+useEffect(() => {
+  const initializeKeplr = async () => {
+    try {
+      if (isClient && window.getOfflineSigner) {
+        // Enable Keplr
+        await window.getOfflineSigner(chainNames_1[0]);
+        if (window.getOfflineSigner && window.getOfflineSigner(chainNames_1[0])) {
+          await connect(); // Connect to the Cosmos wallet (Keplr)
+        }
+      }
+    } catch (error) {
+      console.error("Error initializing Keplr:", error);
+    }
+  };
+  initializeKeplr();
+}, []);
 
   const [verificationDetails, setVerificationDetails] = useState(() => {
     try {
@@ -233,9 +258,6 @@ export default function Headstash() {
     }
   };
 
-  // claim headstash 
-
-
   // eth message signing logic
   const messageToSign = async ({ message, setError }) => {
     try {
@@ -334,6 +356,66 @@ export default function Headstash() {
     }
     return str; // Return the original string if it's too short to truncate
   }
+
+   // claim headstash 
+   const executeContract = async () => {
+    try {
+      // Ensure Keplr is connected
+      if (!wallet || status !== 'Connected') {
+        console.error("Keplr not connected");
+        return;
+      }
+
+      if (!amount || (typeof amount !== 'string' && typeof amount !== 'number')) {
+        console.error("Invalid 'amount' value:", amount);
+        return; // or handle the error in an appropriate way
+      }
+      const contractAddress ="TODO"
+      const executeMsg = {
+        claim: {
+          amount: amount,
+          proof: proofs,
+          eth_pubkey: eth_pubkey,
+          eth_sig: verificationDetails ? verificationDetails.signatureHash : '',
+        },
+      };
+      
+      console.log("Execute Message:", executeMsg);
+
+      const msgExecute: MsgExecuteContract = {
+        typeUrl: "/cosmwasm.wasm.v1beta1.MsgExecuteContract",
+        value: {
+          sender: wallet.bech32Address,
+          contract: contractAddress,
+          msg: toUtf8(JSON.stringify(executeMsg)),
+          funds: [],
+        },
+      };
+
+      const fee = {
+        amount: [{ denom: "uthiolx", amount: "5000" }],
+        gas: "500000",
+      };
+
+      // Use Keplr signer
+      const offlineSigner = window.getOfflineSigner(chainNames_1[0]);
+      const client = await SigningStargateClient.connectWithSigner(
+        "https://terp-testnet-rpc.itrocket.net",
+        offlineSigner
+      );
+
+      console.log("Client:", client);
+const result = await client.sendTokens(wallet.bech32Address, [msgExecute], fee);
+assertIsDeliverTxSuccess(result);
+
+      setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
+      console.log("Execution Result:", result);
+    } catch (error) {
+      setExecutionResult(`Error: ${error.message}`);
+      console.error("Execution Error:", error);
+    }
+  };
+
 
   // cosmos wallet connect
   const getGlobalbutton = () => {
@@ -522,7 +604,7 @@ export default function Headstash() {
                   borderRadius: '4px',
                   cursor: 'pointer',
                 }}
-              // onClick={claim}
+              onClick={executeContract}
               >
                 {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
               </button>
