@@ -25,8 +25,9 @@ import {
   GasPrice,
   MsgSendEncodeObject,
 } from "@cosmjs/stargate"
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
-const chainNames_1 = ["terpnetwork"];
+const chainNames_1 = ["terpnettestnet"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
 const mnemonic = "TODO"
 const rpc = "https://terp-testnet-rpc.itrocket.net:443";
@@ -40,7 +41,7 @@ const getAliceSignerFromMnemonic = async (): Promise<OfflineDirectSigner> => {
 
 export default function Headstash() {
   const router = useRouter()
-  const { username, connect, disconnect, address, wallet, openView, status } = useChain(
+  const { username, connect, disconnect,getOfflineSignerDirect, address, wallet, openView, status } = useChain(
     chainNames_1[0]
   );
   const { status: globalStatus, mainWallet } = useWallet(); // status here is the global wallet status for all activated chains (chain is activated when call useChain)
@@ -64,7 +65,7 @@ export default function Headstash() {
   const [stage, setStage] = useState(0)
   const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
   const contractAddress = String(router.query.address);
-  const transactionMessage = headstashAirdropContract?.messages()?.claim(contractAddress, stage, eth_pubkey, eth_sig, proofs.join(', '), signedMessage) || null;
+  const transactionMessage = headstashAirdropContract?.messages()?.claim(contractAddress, eth_pubkey, eth_sig, proofs, signedMessage) || null;
 
   // Function to set the wallet address when it's available
   const handleEthPubkey = (eth_pubkey: string) => {
@@ -190,7 +191,7 @@ useEffect(() => {
   if (!isClient) return null;
 
   // create feegrant
-  const feegrant = async (proofs: string) => {
+  const feegrant = async (proofs: string[]) => {
     try {
       // Check if eth_pubkey is provided and fetch data
       if (!proofs) {
@@ -366,26 +367,25 @@ useEffect(() => {
         return;
       }
 
-      if (!amount || (typeof amount !== 'string' && typeof amount !== 'number')) {
+      if (!amount ) {
         console.error("Invalid 'amount' value:", amount);
         return; // or handle the error in an appropriate way
       }
-      const contractAddress ="TODO"
+      const contractAddress = "terp1srt36skfhzqr7apq5wcm2u7lc8gesdypvg330fqr0gewkhc84wqsl8sgnf"
       const executeMsg = {
         claim: {
           amount: amount,
-          proof: proofs,
           eth_pubkey: eth_pubkey,
-          eth_sig: verificationDetails ? verificationDetails.signatureHash : '',
+          eth_sig: verificationDetails ? verificationDetails.signatureHash.slice(2) : '', // Remove '0x' prefix
+          proof: proofs,
         },
       };
-      
       console.log("Execute Message:", executeMsg);
 
       const msgExecute: MsgExecuteContract = {
-        typeUrl: "/cosmwasm.wasm.v1beta1.MsgExecuteContract",
+        typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
         value: {
-          sender: wallet.bech32Address,
+          sender: address,
           contract: contractAddress,
           msg: toUtf8(JSON.stringify(executeMsg)),
           funds: [],
@@ -398,14 +398,14 @@ useEffect(() => {
       };
 
       // Use Keplr signer
-      const offlineSigner = window.getOfflineSigner(chainNames_1[0]);
-      const client = await SigningStargateClient.connectWithSigner(
+      const offlineSigner = getOfflineSignerDirect(chainNames_1[0]);
+      const client = await SigningCosmWasmClient.connectWithSigner(
         "https://terp-testnet-rpc.itrocket.net",
         offlineSigner
       );
 
       console.log("Client:", client);
-const result = await client.sendTokens(wallet.bech32Address, [msgExecute], fee);
+const result = await client.signAndBroadcast(address, [msgExecute], fee);
 assertIsDeliverTxSuccess(result);
 
       setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
