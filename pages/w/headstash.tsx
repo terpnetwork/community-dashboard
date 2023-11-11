@@ -12,12 +12,23 @@ import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import { headstashData } from '../../lib/headstash/headstashData';
 import { proofData } from '../../lib/headstash/proofData';
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
+import { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing"
+import { IndexedTx, SigningStargateClient, StargateClient } from "@cosmjs/stargate"
+import { error } from "console";
 
 const chainNames_1 = ["terpnetwork"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
+const mnemonic = "TODO"
+const rpc = "https://terp-testnet-rpc.itrocket.net:443";
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
 
+const getAliceSignerFromMnemonic = async (): Promise<OfflineDirectSigner> => {
+  return DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+    prefix: "terp",
+  })
+}
 
 
 export default function Headstash() {
@@ -30,7 +41,6 @@ export default function Headstash() {
   const headstashAirdropContract = useContracts().headstashAirdrop
   const [account, setAccount] = useState('');
   const [amount, setAmount] = useState('');
-  const [balance, setBalance] = useState(0)
   const [claimMsg, setClaimMsg] = useState('')
   const [cw20TokenAddress, setCW20TokenAddress] = useState('')
   const [eth_pubkey, setEthPubkey] = useState('')
@@ -38,7 +48,8 @@ export default function Headstash() {
   const [executionResult, setExecutionResult] = useState('');
   const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
   const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
-  const [headstashState, setHeadstashState] = useState<ClaimState>('loading')
+  const [headstashState, setHeadstashState] = useState<ClaimState>('loading');
+  const [feegrantState, setFeegrantState] = useState<ClaimState>('not_claimed');
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [proofs, setProofs] = useState<string[]>([''])
@@ -52,7 +63,6 @@ export default function Headstash() {
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
   };
-
 
   const [verificationDetails, setVerificationDetails] = useState(() => {
     try {
@@ -87,7 +97,7 @@ export default function Headstash() {
             setAmount(matchedData.amount);
           } else {
             // Handle the case when no matching data is found
-            setAmount('')
+            setAmount('Not Eligible')
           }
         }
       } catch (error) {
@@ -154,6 +164,78 @@ export default function Headstash() {
 
   if (!isClient) return null;
 
+  // create feegrant
+  const feegrant = async (proofs: string) => {
+    try {
+      // Check if eth_pubkey is provided and fetch data
+      if (!proofs) {
+        console.error("eth_pubkey is required");
+        return err;
+      }
+
+      // Set loading state
+      setLoading(true);
+
+      const fetchHeadstashData = async (eth_pubkey: string) => {
+        try {
+          if (status === 'Connected' && eth_pubkey) {
+            const matchedData = headstashData.find((data) => data.address === eth_pubkey);
+            if (matchedData) {
+              // Set the amount from the matched data
+              setAmount(matchedData.amount);
+            } else {
+              // Handle the case when no matching data is found
+              setAmount('Not Eligible')
+            }
+          }
+        } catch (error) {
+          setAmount('fetch if eligible error');
+        }
+      };
+      // Fetch data using fetchHeadstashData function
+      await fetchHeadstashData(eth_pubkey);
+
+      // Check if there is data available
+      if (amount === 'Not Eligible') {
+        console.error("No data available for the provided eth_pubkey. Cannot request from faucet.");
+        return;
+      }
+
+      // Continue with the fee grant logic
+      const aliceSigner: OfflineDirectSigner = await getAliceSignerFromMnemonic();
+      const signingClient = await SigningStargateClient.connectWithSigner(
+        rpc,
+        aliceSigner,
+      );
+      const alice = (await aliceSigner.getAccounts())[0].address;
+      const result = await signingClient.sendTokens(
+        alice,
+        address,
+        [{ denom: "uterpx", amount: "50000" }],
+        {
+          amount: [{ denom: "uterpx", amount: "5000" }],
+          gas: "200000",
+        },
+        "Headstash Faucet"
+      );
+
+      console.log("FeeGrant Result:", result);
+
+      if (result.success) {
+        // Update headstashState to 'claimed'
+        setFeegrantState('claimed');
+      }
+
+      // Reset loading state once the transaction is complete
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // claim headstash 
+
+
   // eth message signing logic
   const messageToSign = async ({ message, setError }) => {
     try {
@@ -198,7 +280,7 @@ export default function Headstash() {
     if (sig) {
       props.onSubmit(sig);
     }
-    
+
   };
 
   // Handle personal_sign
@@ -265,17 +347,17 @@ export default function Headstash() {
     }
     if (globalStatus === "Connected") {
       return (
-        <>   
+        <>
           <h2 className="flex ">
-            Cosmos PubKey: <br/> {address}
+            Cosmos PubKey: <br /> {address}
           </h2>
-          <br/>
+          <br />
 
           <button
             style={{
               width: '260px',
               padding: '12px',
-              backgroundColor: '#FF0000',
+              backgroundColor: '#181A49',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -284,7 +366,6 @@ export default function Headstash() {
 
             onClick={async () => {
               await disconnect();
-              // setGlobalStatus(WalletStatus.Disconnected);
             }}
           >
 
@@ -294,53 +375,7 @@ export default function Headstash() {
       );
     }
 
-   // claim headstash 
-  const executeContract = async () => {
-    try {
-      if (!offlineSigner) {
-        console.error("Offline signer not available");
-        return;
-      }
 
-      const contractAddress = "TODO";
-
-      // Log values before creating executeMsg
-      const executeMsg = {
-        claim: {
-          amount: amount,
-          proof: proofs,
-          eth_pubkey: eth_pubkey,
-          eth_sig: verificationDetails ? verificationDetails.signatureHash : '',
-        },
-      };
-
-      console.log("Execute Message:", executeMsg);
-
-      const msgExecute: MsgExecuteContract = {
-        typeUrl: "/cosmwasm.wasm.v1beta1.MsgExecuteContract",
-        value: {
-          sender: offlineSigner.senderAddress,
-          contract: contractAddress,
-          msg: toUtf8(JSON.stringify(executeMsg)),
-          funds: [],
-        },
-      };
-
-      const fee = {
-        amount: [{ denom: "uthiolx", amount: "8000" }],
-        gas: "500000",
-      };
-
-      const result = await offlineSigner.sendTokens(offlineSigner.senderAddress, offlineSigner.address, [fee], [msgExecute]);
-      assertIsBroadcastTxSuccess(result);
-
-      setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
-      console.log("Execution Result:", result);
-    } catch (error) {
-      setExecutionResult(`Error: ${error.message}`);
-      console.error("Execution Error:", error);
-    }
-  };
 
     return (
       <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
@@ -349,7 +384,7 @@ export default function Headstash() {
           style={{
             width: '260px',
             padding: '12px',
-            backgroundColor: '#4CAF50',
+            backgroundColor: '#6C8DFF',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
@@ -380,12 +415,12 @@ export default function Headstash() {
               <br />
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
               <br />
-              <PageHeaderDescription>Your Headstash Amount: <br/> </PageHeaderDescription>
+              <PageHeaderDescription>Your Headstash Amount: <br /> </PageHeaderDescription>
               <h2 className="center">
-              {amount !== '' ? formattedTerpAmount : 'checking eligibility...'}
-               <br/>
-            {amount !== '' ? formattedThiolAmount : ''}
-            </h2>
+                {amount !== 'Not Eligible' ? formattedTerpAmount : 'Not Eligible'}
+                <br />
+                {amount !== 'Not Eligible' ? formattedTerpAmount : ''}
+              </h2>
             </div>
           </div>
         </div>
@@ -424,28 +459,28 @@ export default function Headstash() {
                 Sign & Verify
               </button>
               <div></div>
-              <br/>
+              <br />
               {verificationDetails ? (
                 <h2 >
-                  <p>Signature Hash: <br/> {truncateString(verificationDetails.signatureHash)}</p>
+                  <p>Signature Hash: <br /> {truncateString(verificationDetails.signatureHash)}</p>
                 </h2>
               ) : null}
               <div></div>
               {verificationDetails ? (
                 <h2>
-                  <p>Metamask PubKey:<br/> {verificationDetails.address}</p>
+                  <p>Metamask PubKey:<br /> {verificationDetails.address}</p>
                 </h2>
               ) : null}
-              <br/>
+              <br />
               <p>Merkle Proofs:</p>
-              <div class="proof-window">
-              {proofs ? (
-                <h2 >
-                  <p> <br/> {proofs}</p>
-                </h2>
-              ) : null}
+              <div className="proof-window">
+                {proofs ? (
+                  <h2 >
+                    <p> <br /> {proofs}</p>
+                  </h2>
+                ) : null}
               </div>
-          
+
 
             </div>
           </div>
@@ -455,12 +490,12 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
 
-              <PageHeaderHeading>4. Register FeeGrant & <br/> Claim Your Headstash</PageHeaderHeading>
-              <PageHeaderDescription> 
-                Transactions on Terp Network require fee's, <br/> We've got you covered for this one! 👍
-                 </PageHeaderDescription>
-              <br/>
-              <br/>
+              <PageHeaderHeading>4. Register FeeGrant & <br /> Claim Your Headstash</PageHeaderHeading>
+              <PageHeaderDescription>
+                Transactions on Terp Network require fee's, <br /> We've got you covered for this one! 👍
+              </PageHeaderDescription>
+              <br />
+              <br />
               <button
                 style={{
                   width: '200px',
@@ -472,10 +507,11 @@ export default function Headstash() {
                   borderRadius: '4px',
                   cursor: 'pointer',
                 }}
-              // onClick={feegrant}
+                onClick={() => feegrant(eth_pubkey)}
+                disabled={loading} // Disable the button while loading
               >
-                {headstashState === 'claimed' ? 'Headstash Claimed' : ' a. Register FeeGrant'}
-              </button> 
+                {loading ? 'Processing...' : feegrantState === 'claimed' ? 'Headstash Claimed Successfully' : ' a. Register FeeGrant'}
+              </button>
               <button
                 style={{
                   width: '260px',
