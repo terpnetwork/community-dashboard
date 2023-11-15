@@ -11,6 +11,7 @@ import React, { useMemo } from "react";
 import { SiteHeader } from "@/components/navbars/site-header"
 import { RootLayout } from '@/components/layout'
 import { siteConfig } from "@/config/site"
+import { QueryClientProvider } from 'react-query'
 
 // cosmos chain & wallet imports 
 import { assets, chains } from "chain-registry";
@@ -22,6 +23,7 @@ import { wallets as keplrWallets } from "@cosmos-kit/keplr";
 import { wallets as leapWallets } from "@cosmos-kit/leap";
 import { wallets as snapWallet } from "@cosmos-kit/leap-metamask-cosmos-snap";
 import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
+import { queryClient } from '@/config/react-query';
 // import { makeWeb3AuthWallets } from "@cosmos-kit/web3auth";
 
 export const metadata: Metadata = {
@@ -48,6 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
 
      <RootLayout>
+          <QueryClientProvider client={queryClient}>
          <ChainProvider
           chains={[...chains]}
           assetLists={[...assets]}
@@ -97,6 +100,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <SiteHeader />
     <Component {...pageProps} />
     </ChainProvider>
+    </QueryClientProvider>
     </RootLayout>
 
     ) 

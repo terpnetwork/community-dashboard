@@ -86,3 +86,70 @@ h2 {
   white-space: nowrap; /* Prevent text from wrapping to the next line */
 }
 
+/* badges */
+.badges-context {
+  padding-bottom: 20px;
+}
+.badges-header {
+ margin-bottom: 12px;
+ flex: content;
+ justify-content: center;
+}
+.badges-toast {
+
+}
+.badges-title {
+margin-bottom: 4px;
+}
+
+.badges-secondary-title {
+margin-top: 4px;
+}
+
+.badges-claim-content {
+
+}
+
+.badges-id-and-key-container {
+
+}
+
+.badges-id {
+
+}
+
+.badges-id-label {
+
+}
+
+.badges-id-input {
+
+}
+
+.badges-secret-key {
+
+}
+
+.badges-secret-key-label {
+
+}
+
+.badges-secret-key-input {
+
+}
+
+.wallet-address {
+
+}
+
+.badges-claim-buttons {
+
+}
+
+.claim-button {
+  background-color: #db2777;
+}
+
+.wallet-connect {
+  
+}

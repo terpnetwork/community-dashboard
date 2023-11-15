@@ -103,7 +103,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       <button style={{
                   width: '260px',
                   padding: '12px',
-                  backgroundColor: '#4CAF50',
+                  backgroundColor: '#6C8DFF',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',

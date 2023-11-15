@@ -18,7 +18,7 @@ import { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-sign
 import { IndexedTx, SigningStargateClient, StargateClient } from "@cosmjs/stargate"
 import { error } from "console";
 import { toUtf8 } from "@cosmjs/encoding";
-import { coins, makeCosmoshubPath } from "@cosmjs/amino";
+import { coins, makeCosmoshubPath, } from "@cosmjs/amino";
 import {
   assertIsDeliverTxSuccess,
   calculateFee,
@@ -27,9 +27,9 @@ import {
 } from "@cosmjs/stargate"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
-const chainNames_1 = ["terpnettestnet"];
+const chainNames_1 = ["junotestnet"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
-const mnemonic = "TODO"
+const mnemonic = "sing cart stuff gorilla blur elegant slab field glide cheap diet believe turtle face clog rude license begin awkward spider stool patrol coral element"
 const rpc = "https://terp-testnet-rpc.itrocket.net:443";
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
 
@@ -371,12 +371,12 @@ useEffect(() => {
         console.error("Invalid 'amount' value:", amount);
         return; // or handle the error in an appropriate way
       }
-      const contractAddress = "terp1srt36skfhzqr7apq5wcm2u7lc8gesdypvg330fqr0gewkhc84wqsl8sgnf"
+      const contractAddress = "terp10emt4hxmeyr8mjxayyt8huelzd7fpntmly8vus5puelqde6kn8xqp0gcq2"
       const executeMsg = {
         claim: {
-          amount: amount,
           eth_pubkey: eth_pubkey,
           eth_sig: verificationDetails ? verificationDetails.signatureHash.slice(2) : '', // Remove '0x' prefix
+          amount: amount,
           proof: proofs,
         },
       };
