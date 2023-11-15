@@ -86,7 +86,7 @@ const BadgeList: NextPage = () => {
                       <div className="flex items-center space-x-8">
                         <Link
                           className="text-xl text-plumbus"
-                          href={`/badges/actions?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
+                          href={`/w/badges/manage?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
                             (badge.tokenId as string).split('|')[0]
                           }`}
                         >

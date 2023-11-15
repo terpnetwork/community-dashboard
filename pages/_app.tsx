@@ -24,6 +24,10 @@ import { wallets as leapWallets } from "@cosmos-kit/leap";
 import { wallets as snapWallet } from "@cosmos-kit/leap-metamask-cosmos-snap";
 import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { queryClient } from '@/config/react-query';
+import { ContractsProvider } from '@/components/badges/contexts/contracts';
+import { Toaster } from 'react-hot-toast';
+import { Layout } from '@/components/badges/components/layout';
+import { getComponentMetadata } from '@/components/badges/utils/layout';
 // import { makeWeb3AuthWallets } from "@cosmos-kit/web3auth";
 
 export const metadata: Metadata = {
@@ -98,7 +102,12 @@ export default function App({ Component, pageProps }: AppProps) {
         disableIframe={false}
           >
     <SiteHeader />
+    <ContractsProvider>
+    <Toaster position="top-right" />
+    <Layout metadata={getComponentMetadata(Component)}>
     <Component {...pageProps} />
+    </Layout>
+    </ContractsProvider>
     </ChainProvider>
     </QueryClientProvider>
     </RootLayout>

@@ -1,3 +1,4 @@
+
 import { BadgeActions } from "@/components/badges/actions/Action"
 import { ContractPageHeader } from "@/components/badges/components/contractPageHeader"
 import { useContracts } from "@/components/badges/contexts/contracts"

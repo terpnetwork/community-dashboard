@@ -6,22 +6,11 @@
 
 import { toUtf8 } from '@cosmjs/encoding'
 import clsx from 'clsx'
-
-
-
-
-
 import type { Trait } from 'contracts/badgeHub'
 import type { ChangeEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
-
 import { useWallet } from 'utils/wallet'
-
-
-
-
-
 import { Conditional } from '../utils/conditional'
 import { FormControl } from '../forms/formControl'
 import { useInputState, useNumberInputState } from '../forms/formInput.hooks'
@@ -259,25 +248,27 @@ export const BadgeDetails = ({ metadataSize, onChange, uploadMethod }: BadgeDeta
   useEffect(() => {
     const retrieveFeeRate = async () => {
       try {
-        if (isWalletConnected) {
+        if (isWalletConnected && BADGE_HUB_ADDRESS) {
           const feeRateRaw = await (
             await getCosmWasmClient()
           ).queryContractRaw(
             BADGE_HUB_ADDRESS,
             toUtf8(Buffer.from(Buffer.from('fee_rate').toString('hex'), 'hex').toString()),
-          )
-          console.log('Fee Rate Raw: ', feeRateRaw)
-          const feeRate = JSON.parse(new TextDecoder().decode(feeRateRaw as Uint8Array))
-          setMetadataFeeRate(Number(feeRate.metadata))
+          );
+          console.log('Fee Rate Raw: ', feeRateRaw);
+          const feeRate = JSON.parse(new TextDecoder().decode(feeRateRaw as Uint8Array));
+          setMetadataFeeRate(Number(feeRate.metadata));
         }
       } catch (error) {
-        toast.error('Error retrieving metadata fee rate.')
-        setMetadataFeeRate(0)
-        console.log('Error retrieving fee rate: ', error)
+        toast.error('Error retrieving metadata fee rate.');
+        setMetadataFeeRate(0);
+        console.log('Error retrieving fee rate: ', error);
       }
-    }
-    void retrieveFeeRate()
-  }, [isWalletConnected, getCosmWasmClient])
+    };
+  
+    void retrieveFeeRate();
+  }, [isWalletConnected, getCosmWasmClient, BADGE_HUB_ADDRESS]);
+  
 
   return (
     <div>
@@ -300,11 +291,15 @@ export const BadgeDetails = ({ metadataSize, onChange, uploadMethod }: BadgeDeta
               minDate={
                 timezone === 'Local' ? new Date() : new Date(Date.now() + new Date().getTimezoneOffset() * 60 * 1000)
               }
-              onChange={(date) =>
-                setTimestamp(
-                  timezone === 'Local' ? date : new Date(date.getTime() - new Date().getTimezoneOffset() * 60 * 1000),
-                )
-              }
+              onChange={(date) => {
+                if (date) {
+                  setTimestamp(
+                    timezone === 'Local'
+                      ? date
+                      : new Date(date.getTime() - new Date().getTimezoneOffset() * 60 * 1000)
+                  );
+                }
+              }}
               value={
                 timezone === 'Local'
                   ? timestamp

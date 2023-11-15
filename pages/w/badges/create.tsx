@@ -1,5 +1,6 @@
 import { withMetadata } from "@/components/badges/utils/layout";
 import { NextPage } from "next";
+import { Sidetab } from '@typeform/embed-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Conditional } from "@/components/badges/utils/conditional";
@@ -8,7 +9,6 @@ import { ImageUploadDetails, ImageUploadDetailsDataProps, MintRule } from "@/com
 import type { Badge } from '@/contracts/badgeHub';
 import { useInputState } from "@/components/badges/forms/formInput.hooks";
 import { useWallet } from "@/utils/wallet";
-import { useContracts } from "@/contracts/context";
 import { BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL, NETWORK } from "@/components/badges/utils/constants";
 import { toast } from 'react-hot-toast'
 import { addLogItem } from "@/components/badges/contexts/log";
@@ -27,7 +27,6 @@ import { links } from "@/components/badges/utils/links";
 import { Alert } from "@/components/ui/alert";
 import { QRCodeSVG } from "qrcode.react";
 import { toPng } from 'html-to-image'
-import { Button } from "@/components/ui/button";
 import { copy } from "@/components/badges/utils/clipboard";
 import { truncateMiddle } from "@/components/badges/utils/text";
 import clsx from "clsx";
@@ -35,9 +34,8 @@ import { TextInput } from "@/components/badges/forms/formInput";
 import { BadgeDetails, BadgeDetailsDataProps } from "@/components/badges/creation/BadgeDetails";
 import sizeof from "object-sizeof";
 import { BadgeConfirmationModal } from "@/components/badges/creation/BadgeConfirmationModal";
-
-
-
+import { Button } from "@/components/badges/components/Button";
+import { useContracts } from "@/components/badges/contexts/contracts";
 
 
 
@@ -421,7 +419,7 @@ const BadgeCreationPage: NextPage = () => {
 
                     //   leftIcon={<FaCopy />}
                       onClick={() => void copyClaimURL()}
-                      variant="default"
+                     variant="solid"
                     >
                       Copy Claim URL
                     </Button>
@@ -531,7 +529,7 @@ const BadgeCreationPage: NextPage = () => {
                       <Link
                         className="text-stargaze hover:underline"
 
-                        href={`/badges/actions/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
+                        href={`/w/badges/manage/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
                           badgeId as string
                         }`}
                       >
@@ -580,7 +578,7 @@ const BadgeCreationPage: NextPage = () => {
                       <Link
                         className="text-stargaze hover:underline"
 
-                        href={`/badges/actions/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
+                        href={`/w/badges/manage/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
                           badgeId as string
                         }`}
                       >
@@ -702,7 +700,7 @@ const BadgeCreationPage: NextPage = () => {
         <Conditional test={mintRule === 'by_key'}>
           <div className="flex flex-row justify-start py-3 px-8 mb-3 w-full rounded border-2 border-white/20">
             <TextInput className="ml-4 w-full max-w-2xl" {...keyState} disabled required />
-            <Button className="mt-14 ml-4"  onClick={handleGenerateKey}> {/*isDisabled={creatingBadge}*/}
+            <Button className="mt-14 ml-4" isDisabled={creatingBadge} onClick={handleGenerateKey}> 
               Generate Key
             </Button>
           </div>
@@ -754,9 +752,9 @@ const BadgeCreationPage: NextPage = () => {
         <div className="flex justify-end w-full">
           <Button
             className="relative justify-center p-2 mt-2 mb-6 max-h-12 text-white bg-plumbus hover:bg-plumbus-light border-0"
-            // isLoading={creatingBadge}
+            isLoading={creatingBadge}
             onClick={() => performBadgeCreationChecks()}
-            variant="default"
+            variant="solid"
           >
             Create Badge
           </Button>

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // import { AirdropUpload } from 'components/AirdropUpload'
 import { toUtf8 } from '@cosmjs/encoding'
-import { useActionsComboboxState } from 'components/badges/actions/Combobox.hooks'
+
 import {DispatchExecuteArgs, dispatchExecute, previewExecutePayload } from './actions'
 import type { Badge, BadgeHubInstance } from 'contracts/badgeHub'
 import sizeof from 'object-sizeof'
@@ -31,10 +31,12 @@ import { Button } from '@interchain-ui/react'
 import { AddressList } from '../forms/AddressList'
 import { TransactionHash } from '../components/TransactionHash'
 import { BadgeAirdropListUpload } from './airdropListUpload'
-import { WhitelistUpload } from './WhitelistUpload'
+
 import { useAddressListState } from '../forms/AddressList.hooks'
 import { isEitherType } from './actions'
 import { resolveAddress } from '../utils/resolveAddress'
+import { useActionsComboboxState } from './Combobox.hooks'
+import { WhitelistUpload } from './whitelistUpload'
 
 interface BadgeActionsProps {
   badgeHubContractAddress: string
