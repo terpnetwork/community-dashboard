@@ -70,7 +70,7 @@ export const Sidebar = () => {
                   )}
                   tabIndex={-1}
                 >
-                  <Link href="/w/badges/create/">Claim Headstash</Link>
+                  <Link href="/w/headstash/">Claim Headstash</Link>
                 </li>
 
               </ul>
@@ -89,6 +89,15 @@ export const Sidebar = () => {
                 <Link href="/w/badges/"> Badges </Link>
               </span>
               <ul className="z-50 p-2 rounded-box bg-base-200">
+              <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                    router.asPath.includes('/badges/create/') ? 'text-white' : 'text-gray',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="/w/badges/claim/">Claim a Badge</Link>
+                </li>
                 <li
                   className={clsx(
                     'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
@@ -157,7 +166,7 @@ export const Sidebar = () => {
 
       {/* footer attribution */}
       <div className="text-xs text-white/50">
-        Community Dashboard {process.env.APP_VERSION} <br />
+        Community Dashboard <br />
         Powered by{' '}
         <Link className="text-plumbus hover:underline" href="https://terp.network">
           Terp Network

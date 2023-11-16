@@ -4,7 +4,7 @@
 
 import { ContractPageHeader } from '@/components/badges/components/contractPageHeader'
 import { Conditional } from '@/components/badges/utils/conditional'
-import { API_URL, BADGE_HUB_ADDRESS, STARGAZE_URL } from '@/components/badges/utils/constants'
+import { API_URL, BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL, STARGAZE_URL } from '@/components/badges/utils/constants'
 import { withMetadata } from '@/components/badges/utils/layout'
 import { links } from '@/components/badges/utils/links'
 import { Alert } from '@/components/ui/alert'
@@ -96,7 +96,7 @@ const BadgeList: NextPage = () => {
                         <Link
                           className="text-xl text-plumbus"
 
-                          href={`${STARGAZE_URL}/profile/${wallet.address || ''}`}
+                          href={`${BLOCK_EXPLORER_URL}/profile/${wallet.address || ''}`}
                         >
                           <FaUser />
                         </Link>

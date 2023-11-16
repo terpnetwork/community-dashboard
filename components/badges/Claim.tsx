@@ -149,7 +149,7 @@ const claimPage = (
 <div className="mt-8 flex flex-col gap-8 badge-data-content">
     <div className="flex justify-center items-center badge-image">
 
-        <img alt="badge-image" loading="lazy" width="512" height="512" srcSet=""/>
+        <img alt="badge-image" loading="lazy" width="512" height="512" srcSet="https://bafybeiegatnkczuvu5dgujdkyx4oj3xi3mqe5vtnoh7ry3r2lqwfuycs6m.ipfs.nftstorage.link/blob"/>
     </div>
     <div className="flex flex-col gap-2 badge-metadata">
     <div className="metadata-title">

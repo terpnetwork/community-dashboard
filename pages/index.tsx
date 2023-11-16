@@ -22,6 +22,7 @@ import { ChainWalletCard } from "@/components/wallet/chain-wallet-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@interchain-ui/react"
 import { buttonVariants } from "@/components/ui/button"
+import StyledPointer from "@/components/utils/styled-pointer"
 
 const chainNames_1 = ["terpnetwork"];
 const chainNames_2: string[] = [];
@@ -93,8 +94,7 @@ export default function Home() {
 
   return (
     <main
-      className="home-head"
-    >
+      className="home-head">
        <PageHeader className="pb-8">
         <Link
           href="https://interchain.builders/c/terp"
@@ -199,8 +199,6 @@ export default function Home() {
       
       <DemoDatePicker />
       </PageHeader>
-
-  
     </main>
   )
 }

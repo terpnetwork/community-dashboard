@@ -22,7 +22,7 @@ import { uid } from "@/components/badges/utils/random";
 import * as secp256k1 from 'secp256k1'
 import * as crypto from 'crypto'
 import { NextSeo } from "next-seo";
-import { Link, Tooltip } from "@interchain-ui/react";
+import { Link } from "@interchain-ui/react";
 import { links } from "@/components/badges/utils/links";
 import { Alert } from "@/components/ui/alert";
 import { QRCodeSVG } from "qrcode.react";
@@ -36,6 +36,7 @@ import sizeof from "object-sizeof";
 import { BadgeConfirmationModal } from "@/components/badges/creation/BadgeConfirmationModal";
 import { Button } from "@/components/badges/components/Button";
 import { useContracts } from "@/components/badges/contexts/contracts";
+import { Tooltip } from "@/components/badges/components/Tooltip";
 
 
 
@@ -429,7 +430,8 @@ const BadgeCreationPage: NextPage = () => {
                   Badge ID:{` ${badgeId as string}`}
                   <br />
                   Private Key:
-                  <Tooltip title="Click to copy the private key">
+                  <Tooltip 
+                  label="Click to copy the private key">
                     <button
                       className="group flex space-x-2 font-mono text-base text-white/50 hover:underline"
                       onClick={() => void copy(createdBadgeKey as string)}
@@ -529,7 +531,7 @@ const BadgeCreationPage: NextPage = () => {
                       <Link
                         className="text-stargaze hover:underline"
 
-                        href={`/w/badges/manage/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
+                        href={`/badges/actions/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
                           badgeId as string
                         }`}
                       >
@@ -578,7 +580,7 @@ const BadgeCreationPage: NextPage = () => {
                       <Link
                         className="text-stargaze hover:underline"
 
-                        href={`/w/badges/manage/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
+                        href={`/badges/actions/?badgeHubContractAddress=${BADGE_HUB_ADDRESS}&badgeId=${
                           badgeId as string
                         }`}
                       >
@@ -611,8 +613,8 @@ const BadgeCreationPage: NextPage = () => {
             )}
           >
             <Tooltip
-            //   class="m-0 w-1/3 bg-blue-500"
-              title="The same single private key can be utilized by multiple users to share badge minting authority. Ideal for projects with multiple administrators."
+              className="m-0 w-1/3"
+              label="The same single private key can be utilized by multiple users to share badge minting authority. Ideal for projects with multiple administrators."
               placement="bottom"
             >
               <button
@@ -640,9 +642,8 @@ const BadgeCreationPage: NextPage = () => {
             )}
           >
             <Tooltip
-            //   backgroundColor="bg-blue-500"
-            //   className="m-0 w-1/3"
-              title="The key pairs are intended to be saved and shared with others. Each user can claim a badge separately using the key pair that they received."
+              className="m-0 w-1/3"
+              label="The key pairs are intended to be saved and shared with others. Each user can claim a badge separately using the key pair that they received."
               placement="bottom"
             >
               <button
@@ -670,9 +671,8 @@ const BadgeCreationPage: NextPage = () => {
             )}
           >
             <Tooltip
-            //   backgroundColor="bg-blue-500"
-            //   className="m-0 w-1/3"
-              title="The most basic approach. However, having just one authorized address for minting badges might limit your ability to delegate that responsibility."
+              className="m-0 w-1/3"
+              label="The most basic approach. However, having just one authorized address for minting badges might limit your ability to delegate that responsibility."
               placement="bottom"
             >
               <button
@@ -700,7 +700,7 @@ const BadgeCreationPage: NextPage = () => {
         <Conditional test={mintRule === 'by_key'}>
           <div className="flex flex-row justify-start py-3 px-8 mb-3 w-full rounded border-2 border-white/20">
             <TextInput className="ml-4 w-full max-w-2xl" {...keyState} disabled required />
-            <Button className="mt-14 ml-4" isDisabled={creatingBadge} onClick={handleGenerateKey}> 
+            <Button className="mt-14 ml-4"isDisabled={creatingBadge} onClick={handleGenerateKey}> 
               Generate Key
             </Button>
           </div>

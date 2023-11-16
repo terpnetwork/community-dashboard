@@ -2,11 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@layer utilities {
+  @variants dark {
+    .dark\:bg-start {
+      background-color: rgb(var(--background-start-rgb)) !important;
+    }
+
+    .dark\:bg-end {
+      background-color: rgb(var(--background-end-rgb)) !important;
+    }
+
+    .dark\:text-foreground {
+      color: rgb(var(--foreground-rgb)) !important;
+    }
+  }
 }
+
+/* Your custom styles */
+
+:root {
+  color-scheme: dark;
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -19,12 +36,13 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    to bottom,
+    transparent,
+    rgb(var(--background-end-rgb))
+  ) rgb(var(--background-start-rgb));
 }
+
+/* Example usage in HTML */
 
 .home-head {
   display: flex;
@@ -33,7 +51,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 24px;
-  background: url(../public/background-image.svg) no-repeat center bottom;
 }
 
 .claim-head {
@@ -44,7 +61,10 @@ body {
   justify-content: space-between;
   padding: 24px;
   padding-bottom: 30px;
-  background: url(../public/background-image.svg) no-repeat center bottom;
+
+}
+.claim-button {
+  background-color: #6c8dff;
 }
 
 .steps-container {
@@ -56,7 +76,6 @@ body {
     flex-grow: 1;
     padding: 1.98vw;
     border-radius: 1.98vw;
-    background: #00000099;
     max-width: 100%;
     display: flex;
 }
@@ -95,9 +114,9 @@ h2 {
  flex: content;
  justify-content: center;
 }
-.badges-toast {
+/* .badges-toast {
 
-}
+} */
 .badges-title {
 margin-bottom: 4px;
 }
@@ -106,7 +125,7 @@ margin-bottom: 4px;
 margin-top: 4px;
 }
 
-.badges-claim-content {
+/* .badges-claim-content {
 
 }
 
@@ -144,12 +163,10 @@ margin-top: 4px;
 
 .badges-claim-buttons {
 
-}
+} */
 
-.claim-button {
-  background-color: #db2777;
-}
 
-.wallet-connect {
+
+/* .wallet-connect {
   
-}
+} */

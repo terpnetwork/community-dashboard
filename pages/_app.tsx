@@ -28,6 +28,7 @@ import { ContractsProvider } from '@/components/badges/contexts/contracts';
 import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/badges/components/layout';
 import { getComponentMetadata } from '@/components/badges/utils/layout';
+import StyledPointer from '@/components/utils/styled-pointer';
 // import { makeWeb3AuthWallets } from "@cosmos-kit/web3auth";
 
 export const metadata: Metadata = {
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
   ],
   creator: "Terp Network Contributors",
     themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "black" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
