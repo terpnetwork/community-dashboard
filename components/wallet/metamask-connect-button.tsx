@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+} from 'wagmi'
+import {getShortAddress} from '@/components/badges/utils/getShortAddress' 
 
 interface MetamaskConnectButtonProps {
   handleEthPubkey: (eth_pubkey: string) => void;
@@ -8,7 +14,10 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   handleEthPubkey,
 }) => {
   const [eth_pubkey, setEthPubkey] = useState<string>("");
-
+  const { address, connector, isConnected } = useAccount()
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect()
+  const { disconnect } = useDisconnect()
 
   const connectWallet = async () => {
     if ((window as any).ethereum) {
@@ -56,11 +65,18 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
     }
   };
 
-
   const walletConnectHandler = async () => {
     try {
       const walletResponse = await connectWallet();
       setEthPubkey(walletResponse.address);
+    } catch (e) {
+    }
+  };
+
+  const walletDisconnectHandler = async () => {
+    try {
+      await disconnect();
+      setEthPubkey("");
     } catch (e) {
     }
   };
@@ -70,7 +86,6 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
           setEthPubkey(accounts[0]);
-          setError(null);
         } else {
           setEthPubkey("");
         }
@@ -93,31 +108,51 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
 
   useEffect(() => {
     load().then(() => {
-      // After loading, call the callback to provide the wallet address
       handleEthPubkey(eth_pubkey);
     });
   }, [eth_pubkey, handleEthPubkey]);
 
+
+
   return (
     <div>
-      <button style={{
-                  width: '260px',
-                  padding: '12px',
-                  backgroundColor: '#6C8DFF',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }} 
-      className="wallet-button" onClick={walletConnectHandler}>
-        {eth_pubkey.length > 0 ? (
-          String(eth_pubkey).substring(0, 6) +
-          "..." +
-          String(eth_pubkey).substring(38)
-        ) : (
-          <span>Connect Wallet</span>
-        )}
-      </button>
+      { eth_pubkey != "" ? (
+        <button
+          style={{
+            width: '260px',
+            padding: '12px',
+            backgroundColor: '#181A49',
+                        color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          className="wallet-button"
+          onClick={walletDisconnectHandler}
+        >
+              {getShortAddress(eth_pubkey)}
+        </button>
+      ) : (
+        <button
+          style={{
+            width: '260px',
+            padding: '12px',
+            backgroundColor: '#6C8DFF',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+          className="wallet-button"
+          onClick={walletConnectHandler}
+        >
+          {eth_pubkey.length > 0 ? (
+            `${eth_pubkey.substring(0, 6)}...${eth_pubkey.substring(38)}`
+          ) : (
+            <span>Connect Wallet</span>
+          )}
+        </button>
+      )}
     </div>
   );
 };

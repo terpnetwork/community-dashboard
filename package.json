@@ -70,7 +70,9 @@
     "secp256k1": "^5.0.0",
     "styled-components": "^6.1.1",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^1.19.9",
+    "wagmi": "^1.4.7"
   },
   "resolutions": {
     "@types/react": "18.2"

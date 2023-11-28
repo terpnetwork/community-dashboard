@@ -170,3 +170,23 @@ margin-top: 4px;
 /* .wallet-connect {
   
 } */
+
+.buttonStyle {
+  width: 260px;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.secondButtonStyle {
+  width: 200px;
+  padding: 12px;
+  margin-right: 4px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

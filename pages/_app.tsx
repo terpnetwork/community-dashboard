@@ -4,7 +4,7 @@ import "@interchain-ui/react/styles";
 
 // next & react imports 
 import { Metadata } from "next"
-import type { AppProps } from 'next/app' 
+import type { AppProps } from 'next/app'
 import React, { useMemo } from "react";
 
 // application component imports 
@@ -29,6 +29,7 @@ import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/badges/components/layout';
 import { getComponentMetadata } from '@/components/badges/utils/layout';
 import StyledPointer from '@/components/utils/styled-pointer';
+import { WagmiConfig, createConfig } from 'wagmi'
 // import { makeWeb3AuthWallets } from "@cosmos-kit/web3auth";
 
 export const metadata: Metadata = {
@@ -44,19 +45,26 @@ export const metadata: Metadata = {
     },
   ],
   creator: "Terp Network Contributors",
-    themeColor: [
+  themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "black" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
 
+
 export default function App({ Component, pageProps }: AppProps) {
+
+// Set up wagmi config
+const config = createConfig({
+  autoConnect: true,
+})
+
 
   return (
 
-     <RootLayout>
-          <QueryClientProvider client={queryClient}>
-         <ChainProvider
+    <RootLayout>
+      <QueryClientProvider client={queryClient}>
+        <ChainProvider
           chains={[...chains]}
           assetLists={[...assets]}
           wallets={[
@@ -65,7 +73,7 @@ export default function App({ Component, pageProps }: AppProps) {
             ...keplrWallets,
             ...ledgerWallets,
             // ...web3AuthWallets,
-     
+
           ]}
           throwErrors={false}
           subscribeConnectEvents={false}
@@ -85,34 +93,36 @@ export default function App({ Component, pageProps }: AppProps) {
             },
           }}
           logLevel={"DEBUG"}
-        endpointOptions={{
-          isLazy: true,
-          endpoints: {
-            cosmoshub: {
-              isLazy: false,
-              rpc: [
-                {
-                  isLazy: true,
-                  url: "https://rpc.cosmos.directory/cosmoshub",
-                  headers: {},
-                },
-              ],
-            }
-          },
-        }}
-        disableIframe={false}
-          >
-    <SiteHeader />
-    <ContractsProvider>
-    <Toaster position="top-right" />
-    <Layout metadata={getComponentMetadata(Component)}>
-    <Component {...pageProps} />
-    </Layout>
-    </ContractsProvider>
-    </ChainProvider>
-    </QueryClientProvider>
+          endpointOptions={{
+            isLazy: true,
+            endpoints: {
+              cosmoshub: {
+                isLazy: false,
+                rpc: [
+                  {
+                    isLazy: true,
+                    url: "https://rpc.cosmos.directory/cosmoshub",
+                    headers: {},
+                  },
+                ],
+              }
+            },
+          }}
+          disableIframe={false}
+        >
+          <SiteHeader />
+          <WagmiConfig config={config}>
+          <ContractsProvider>
+            <Toaster position="top-right" />
+            <Layout metadata={getComponentMetadata(Component)}>
+              <Component {...pageProps} />
+            </Layout>
+          </ContractsProvider>
+     </WagmiConfig>
+        </ChainProvider>
+      </QueryClientProvider>
     </RootLayout>
 
-    ) 
+  )
 
 }

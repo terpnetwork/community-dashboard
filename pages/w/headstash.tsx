@@ -1,33 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text } from "@interchain-ui/react"
-import { useChain, useWallet } from "@cosmos-kit/react";
-import MetamaskConnectButton from "../../components/wallet/metamask-connect-button";
-import { PaperPlaneIcon } from "@radix-ui/react-icons"
-import { Badge } from "@/components/ui/badge"
-import { useIsClient } from "@/hooks";
-import { toast } from 'react-hot-toast'
 import { ethers } from "ethers";
-import router, { useRouter } from "next/router";
+import { toast } from 'react-hot-toast'
+import { useChain, useWallet } from "@cosmos-kit/react";
+import { useRouter } from "next/router";
+import { Button } from "@interchain-ui/react"
+import MetamaskConnectButton from "../../components/wallet/metamask-connect-button";
+import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
+import { PaperPlaneIcon } from "@radix-ui/react-icons"
+import { useIsClient } from "@/hooks";
 import { useContracts } from "@/contracts/context";
 import { SignedMessage } from "@/contracts/headstash";
 import { headstashData } from '../../lib/headstash/headstashData';
 import { proofData } from '../../lib/headstash/proofData';
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
-import { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing"
-import { IndexedTx, SigningStargateClient, StargateClient } from "@cosmjs/stargate"
-import { error } from "console";
 import { toUtf8 } from "@cosmjs/encoding";
-import { coins, makeCosmoshubPath, } from "@cosmjs/amino";
-import {
-  assertIsDeliverTxSuccess,
-  calculateFee,
-  GasPrice,
-  MsgSendEncodeObject,
-} from "@cosmjs/stargate"
+import { assertIsDeliverTxSuccess, SigningStargateClient } from "@cosmjs/stargate"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { DirectSecp256k1HdWallet, OfflineDirectSigner } from "@cosmjs/proto-signing"
+import { getShortSig } from "@/utils/getShortSig";
+import {BlurredContent} from '@/components/headstash/blurContent'
 
-const chainNames_1 = ["junotestnet"];
+const chainNames_1 = ["terpnettestnet"];
 const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
 const mnemonic = "sing cart stuff gorilla blur elegant slab field glide cheap diet believe turtle face clog rude license begin awkward spider stool patrol coral element"
 const rpc = "https://terp-testnet-rpc.itrocket.net:443";
@@ -41,7 +33,7 @@ const getAliceSignerFromMnemonic = async (): Promise<OfflineDirectSigner> => {
 
 export default function Headstash() {
   const router = useRouter()
-  const { username, connect, disconnect,getOfflineSignerDirect, address, wallet, openView, status } = useChain(
+  const { username, connect, disconnect, getOfflineSignerDirect, address, wallet, openView, status } = useChain(
     chainNames_1[0]
   );
   const { status: globalStatus, mainWallet } = useWallet(); // status here is the global wallet status for all activated chains (chain is activated when call useChain)
@@ -66,35 +58,37 @@ export default function Headstash() {
   const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined)
   const contractAddress = String(router.query.address);
   const transactionMessage = headstashAirdropContract?.messages()?.claim(contractAddress, eth_pubkey, eth_sig, proofs, signedMessage) || null;
+  const [isVerified, setIsVerified, setItem] = useState(false);
 
-  // Function to set the wallet address when it's available
+
+  // WALLET CONFIG //
+
+  // set eth_pubkey
   const handleEthPubkey = (eth_pubkey: string) => {
     setEthPubkey(eth_pubkey);
   };
 
-  // Connect Keplr on page arrival
-useEffect(() => {
-  const initializeKeplr = async () => {
-    try {
-      if (isClient && window.getOfflineSigner) {
-        // Enable Keplr
-        await window.getOfflineSigner(chainNames_1[0]);
-        if (window.getOfflineSigner && window.getOfflineSigner(chainNames_1[0])) {
-          await connect(); // Connect to the Cosmos wallet (Keplr)
+  // connect Keplr
+  useEffect(() => {
+    const initializeKeplr = async () => {
+      try {
+        if (isClient && window.getOfflineSigner) {
+          await window.getOfflineSigner(chainNames_1[0]);
+          if (window.getOfflineSigner && window.getOfflineSigner(chainNames_1[0])) {
+            await connect();
+          }
         }
+      } catch (error) {
+        console.error("Error initializing Keplr:", error);
       }
-    } catch (error) {
-      console.error("Error initializing Keplr:", error);
-    }
-  };
-  initializeKeplr();
-}, []);
+    };
+    initializeKeplr();
+  }, []);
 
-  const [verificationDetails, setVerificationDetails] = useState(() => {
+  const [ethSigDetails, setEthSigDetails] = useState(() => {
     try {
-      // Load verification details from local storage if on the client side
       if (isClient) {
-        const storedDetails = localStorage.getItem("verificationDetails");
+        const storedDetails = localStorage.getItem("ethSigDetails");
         return storedDetails ? JSON.parse(storedDetails) : null;
       }
       return null;
@@ -104,25 +98,20 @@ useEffect(() => {
     }
   });
 
-  // State to track verification status
-  const [isVerified, setIsVerified, setItem] = useState(false);
 
-  // Fetch and set the Headstash amount when the wallet is connected
+  // fetch headstash data
   useEffect(() => {
     console.log('Status:', status);
     console.log('Address:', address);
     console.log('Metamask:', eth_pubkey);
-    // console.log('headstashData:', headstashData);
-
+    console.log('EthSig:', eth_sig);
     const fetchHeadstashData = async (eth_pubkey: string) => {
       try {
         if (status === 'Connected' && eth_pubkey) {
           const matchedData = headstashData.find((data) => data.address === eth_pubkey);
           if (matchedData) {
-            // Set the amount from the matched data
             setAmount(matchedData.amount);
           } else {
-            // Handle the case when no matching data is found
             setAmount('Not Eligible')
           }
         }
@@ -134,8 +123,8 @@ useEffect(() => {
     void fetchHeadstashData(eth_pubkey);
   }, [status, eth_pubkey, wallet]);
 
+  // fetch proofs from `@/lib/headstash/proofData.ts`
   useEffect(() => {
-    // Function to fetch and set proofs
     const fetchProofs = async (eth_pubkey: string) => {
       try {
         if (status === 'Connected' && eth_pubkey) {
@@ -156,23 +145,12 @@ useEffect(() => {
     void fetchProofs(eth_pubkey);
   }, [status, eth_pubkey, wallet]);
 
-  // Function to reset the proofs state
+  // resets proofs
   const resetProofs = () => {
     setProofs('');
   };
+  // TODO: manual fetch proof button
 
-  // if cosmos wallet not connected, connect.
-  useEffect(() => {
-    try {
-      if (status === 'Disconnected') {
-        connect(ConnectType.EXTENSION)
-      }
-    } catch (err: any) {
-      toast.error(err.message, {
-        style: { maxWidth: 'none' },
-      })
-    }
-  }, [contractAddress, wallet])
 
   // set the signed claim message. 
   useEffect(() => {
@@ -180,13 +158,7 @@ useEffect(() => {
   }, [signature, claimMsg])
 
 
-  // Connect Metamask on page arrival
-  useEffect(() => {
-    const fn = async () => {
-      await mainWallet?.connect();
-    };
-    fn();
-  }, []);
+
 
   if (!isClient) return null;
 
@@ -303,13 +275,12 @@ useEffect(() => {
     if (sig) {
       props.onSubmit(sig);
     }
-
   };
 
   // Handle personal_sign
   const handlePersonalSign = async () => {
     try {
-      // Ensure MetaMask is connected
+      // ensure metamask is connected
       if (!window.ethereum || !window.ethereum.selectedAddress) {
         console.error("MetaMask not connected or address not available");
         return;
@@ -317,7 +288,7 @@ useEffect(() => {
 
       const terpAddress: string = address.toString();
       const from = window.ethereum.selectedAddress;
-      const exampleMessage = terpAddress;
+      const cosmosWallet = terpAddress;
       const msg = `0x${Buffer.from(exampleMessage, 'utf8').toString('hex')}`;
       const sign = await window.ethereum.request({
         method: 'personal_sign',
@@ -325,7 +296,7 @@ useEffect(() => {
       });
 
       const sig = {
-        message: exampleMessage,
+        message: cosmosWallet,
         signatureHash: sign,
         address: from,
         timestamp: new Date().toISOString(),
@@ -335,11 +306,11 @@ useEffect(() => {
 
       // Save verification details to local storage if available
       if (isClient && typeof localStorage !== "undefined") {
-        localStorage.setItem("verificationDetails", JSON.stringify(sig));
+        localStorage.setItem("ethSigDetails", JSON.stringify(sig));
       }
 
       // Update state with verification details
-      setVerificationDetails(sig);
+      setEthSigDetails(sig);
       setIsVerified(true);
 
       // Save verification details to local storage
@@ -348,18 +319,8 @@ useEffect(() => {
     }
   };
 
-  // trunicate sig to display 
-  function truncateString(str) {
-    if (str && str.length >= 10) {
-      const firstFive = str.slice(0, 5);
-      const lastFive = str.slice(-5);
-      return firstFive + "..." + lastFive;
-    }
-    return str; // Return the original string if it's too short to truncate
-  }
-
-   // claim headstash 
-   const executeContract = async () => {
+  // claim headstash 
+  const executeContract = async () => {
     try {
       // Ensure Keplr is connected
       if (!wallet || status !== 'Connected') {
@@ -367,16 +328,16 @@ useEffect(() => {
         return;
       }
 
-      if (!amount ) {
+      if (!amount) {
         console.error("Invalid 'amount' value:", amount);
         return; // or handle the error in an appropriate way
       }
       const contractAddress = "terp10emt4hxmeyr8mjxayyt8huelzd7fpntmly8vus5puelqde6kn8xqp0gcq2"
       const executeMsg = {
         claim: {
-          eth_pubkey: eth_pubkey,
-          eth_sig: verificationDetails ? verificationDetails.signatureHash.slice(2) : '', // Remove '0x' prefix
           amount: amount,
+          eth_pubkey: eth_pubkey,
+          eth_sig: ethSigDetails ? ethSigDetails.signatureHash.slice(2) : '', // Remove '0x' prefix
           proof: proofs,
         },
       };
@@ -405,8 +366,8 @@ useEffect(() => {
       );
 
       console.log("Client:", client);
-const result = await client.signAndBroadcast(address, [msgExecute], fee);
-assertIsDeliverTxSuccess(result);
+      const result = await client.signAndBroadcast(address, [msgExecute], fee);
+      assertIsDeliverTxSuccess(result);
 
       setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
       console.log("Execution Result:", result);
@@ -415,7 +376,6 @@ assertIsDeliverTxSuccess(result);
       console.error("Execution Error:", error);
     }
   };
-
 
   // cosmos wallet connect
   const getGlobalbutton = () => {
@@ -457,8 +417,6 @@ assertIsDeliverTxSuccess(result);
       );
     }
 
-
-
     return (
       <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
         <button
@@ -477,23 +435,14 @@ assertIsDeliverTxSuccess(result);
     );
   };;
 
-  function toRegistration() {
-    router.push('/register');
-
-  }
-
-  // Components
-
   return (
-    <main
-      className="claim-head"
-    >
+    <main className="claim-head">
       <div className="steps-container">
 
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <h1>  <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading></h1>
+              <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading>
               <br />
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
               <br />
@@ -507,112 +456,90 @@ assertIsDeliverTxSuccess(result);
           </div>
         </div>
 
-        <div className="steps-card">
-          <div className="inner-card">
-            <div className="step-one-card">
-              <PageHeaderHeading>2. Connect Cosmos Wallet</PageHeaderHeading>
-              <PageHeaderDescription></PageHeaderDescription>
-              <br />
-              {getGlobalbutton()}
+        <div>
+          {amount !== 'Not Eligible' ? (
+            <div>
+              <div className="steps-card">
+                <div className="inner-card">
+                  <div className="step-one-card">
+                    <PageHeaderHeading>2. Connect Cosmos Wallet</PageHeaderHeading>
+                    <PageHeaderDescription></PageHeaderDescription>
+                    <br />
+                    {getGlobalbutton()}
 
-            </div>
-          </div>
-        </div>
-        <div className="steps-card">
-          <div className="inner-card">
-            <div className="step-one-card">
-              <PageHeaderHeading>3. Verify Metamask Ownership</PageHeaderHeading>
-              <PageHeaderDescription></PageHeaderDescription>
-              <p>A signed message will verify you own your wallet.</p>
-              <br />
-              <button
-                style={{
-                  width: '260px',
-                  padding: '12px',
-                  backgroundColor: '#4CAF50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-                onClick={handlePersonalSign}
-                disabled={isVerified}
-              >
-                Sign & Verify
-              </button>
-              <div></div>
-              <br />
-              {verificationDetails ? (
-                <h2 >
-                  <p>Signature Hash: <br /> {truncateString(verificationDetails.signatureHash)}</p>
-                </h2>
-              ) : null}
-              <div></div>
-              {verificationDetails ? (
-                <h2>
-                  <p>Metamask PubKey:<br /> {verificationDetails.address}</p>
-                </h2>
-              ) : null}
-              <br />
-              <p>Merkle Proofs:</p>
-              <div className="proof-window">
-                {proofs ? (
-                  <h2 >
-                    <p> <br /> {proofs}</p>
-                  </h2>
-                ) : null}
+                  </div>
+                </div>
               </div>
+              <div className="steps-card">
+                <div className="inner-card">
+                  <div className="step-one-card">
+                    <PageHeaderHeading>3. Verify Metamask Ownership</PageHeaderHeading>
+                    <PageHeaderDescription></PageHeaderDescription>
+                    <p>A signed message will verify you own your wallet.</p>
+                    <br />
+                    <button
+                       className="buttonStyle"
+                      onClick={handlePersonalSign}
+                      disabled={isVerified}
+                    >
+                      Sign & Verify
+                    </button>
+                    <div></div>
+                    <br />
+                    {ethSigDetails ? (
+                      <PageHeaderDescription >
+                        <p>Signature Hash: <br /> {getShortSig(ethSigDetails.signatureHash)}</p>
+                      </PageHeaderDescription>
+                    ) : null}
+                    <div></div>
+                    {ethSigDetails ? (
+                      <PageHeaderDescription>
+                        <p>Metamask PubKey:<br /> {ethSigDetails.address}</p>
+                      </PageHeaderDescription>
+                    ) : null}
+                    <br />
+                    <p>Merkle Proofs:</p>
+                    <div className="proof-window">
+                      {proofs ? (
+                        <PageHeaderDescription >
+                          <p> <br /> {proofs}</p>
+                        </PageHeaderDescription>
+                      ) : null}
+                    </div>
 
 
+                  </div>
+                </div>
+              </div>
+              <div className="steps-card">
+                <div className="inner-card">
+                  <div className="step-one-card">
+                    <PageHeaderHeading>4. Setup Terp Account & <br /> Claim Your Headstash</PageHeaderHeading>
+                    <PageHeaderDescription>
+                      Transactions on Terp Network require fee's, <br /> We've got you covered for this one! 👍
+                    </PageHeaderDescription>
+                    <br />
+                    <br />
+                      <div>
+                    <button className="secondButtonStyle"
+                      onClick={() => feegrant(eth_pubkey)}
+                      disabled={loading}>
+                      {loading ? 'Processing...' : feegrantState === 'claimed' ? 'Headstash Claimed Successfully' : ' a. Setup Account'}
+                    </button>
+                    <button className="buttonStyle"
+                      onClick={executeContract}>
+                      {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
+                    </button>
+                    </div>
+          
+                    <br />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="steps-card">
-          <div className="inner-card">
-            <div className="step-one-card">
-
-              <PageHeaderHeading>4. Register FeeGrant & <br /> Claim Your Headstash</PageHeaderHeading>
-              <PageHeaderDescription>
-                Transactions on Terp Network require fee's, <br /> We've got you covered for this one! 👍
-              </PageHeaderDescription>
-              <br />
-              <br />
-              <button
-                style={{
-                  width: '200px',
-                  padding: '12px',
-                  marginRight: '4px',
-                  backgroundColor: '#4CAF50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-                onClick={() => feegrant(eth_pubkey)}
-                disabled={loading} // Disable the button while loading
-              >
-                {loading ? 'Processing...' : feegrantState === 'claimed' ? 'Headstash Claimed Successfully' : ' a. Register FeeGrant'}
-              </button>
-              <button
-                style={{
-                  width: '260px',
-                  padding: '12px',
-                  backgroundColor: '#4CAF50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              onClick={executeContract}
-              >
-                {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
-              </button>
-              <br />
-
-
-            </div>
-          </div>
+          ) : (
+      <BlurredContent/>
+          )}
         </div>
       </div>
     </main>
