@@ -410,9 +410,15 @@ export default function Claim() {
             <div className="max-w-screen-sm px-5 mx-auto mt-12 pb-20 badges-context">
                 <div className="badges-header"></div>
                 <div className="badges-toast"></div>
-                <PageHeaderHeading className="badges-title">Claim Your Badge</PageHeaderHeading>
-                <PageHeaderDescription className="badges-secondary-title">Enter the secret key to claim your badge.</PageHeaderDescription>
-                <PageHeaderDescription className="badges-secondary-title">Use Keplr or Metamask Snaps to create a wallet.</PageHeaderDescription>
+                <div className="badges-title">
+                <PageHeaderHeading>Claim Your Badge</PageHeaderHeading>
+                </div>
+                <div className="badges-secondary-title">
+                <PageHeaderDescription >Enter the secret key to claim your badge.</PageHeaderDescription>
+                </div>
+                <div className="badges-secondary-title">
+                <PageHeaderDescription >Use Keplr or Metamask Snaps to create a wallet.</PageHeaderDescription>
+                </div>
                 <div className="flex flex-col gap-8 mt-8">
                     <div className=" flex gap-4 badges-id-and-key-container">
                         <div className="w-32 badges-id">

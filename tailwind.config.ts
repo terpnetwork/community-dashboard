@@ -15,7 +15,7 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        stargaze: { DEFAULT: '#6c8dff', 80: '#6c8dff' },
+        stargaze: { DEFAULT: '#c2b280', 80: '#c2b280' },
         dark: { DEFAULT: '#06090B' },
         gray: { DEFAULT: '#A9A9A9' },
         'dark-gray': { DEFAULT: '#191D20' },
@@ -23,8 +23,8 @@ const config: Config = {
 
         neutral: colors.neutral,
         plumbus: {
-          DEFAULT: '#6c8dff',
-          light: '#2859a880',
+          DEFAULT: '#c2b280',
+          light: '#7e7251',
           matte: '#5D89E9',
           dark: '#FFC900',
           10: '#FFF0ED',

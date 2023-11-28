@@ -15,9 +15,9 @@ export const ContractPageHeader = ({ title, description, link }: ContractPageHea
     <PageHeader title={title}>
       {description} Learn more in the{' '}
       <Link className="font-bold text-plumbus hover:underline" href={link}>
-        documentation
+        documentation.
       </Link>
-      .
+      
     </PageHeader>
   )
 }

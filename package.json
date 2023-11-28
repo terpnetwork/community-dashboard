@@ -41,8 +41,6 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@steak-enjoyers/badges.js": "^1.0.0",
     "@typeform/embed-react": "^3.8.0",
-    "@web3modal/core": "^2.0.0-rc.1",
-    "@web3modal/ui": "^2.0.0-rc.1",
     "bignumber.js": "^9.1.1",
     "chain-registry": "^1.13.0",
     "class-variance-authority": "^0.7.0",
