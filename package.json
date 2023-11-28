@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.2",
+    "@chakra-ui/react": "^2.8.2",
     "@cosmjs/cosmwasm-stargate": "^0.31.3",
     "@cosmjs/crypto": "^0.31.3",
     "@cosmos-kit/core": "^2.7.2",
@@ -21,7 +22,10 @@
     "@cosmos-kit/ledger": "^2.5.2",
     "@cosmos-kit/react": "^2.9.3",
     "@cosmos-kit/web3auth": "^2.4.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.17",
+    "@hookform/resolvers": "^3.3.2",
     "@interchain-ui/react": "1.11.0",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-alert-dialog": "^1.0.5",
@@ -35,6 +39,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@steak-enjoyers/badges.js": "^1.0.0",
     "@typeform/embed-react": "^3.8.0",
     "@web3modal/core": "^2.0.0-rc.1",
     "@web3modal/ui": "^2.0.0-rc.1",
@@ -46,6 +51,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
     "ethers": "^6.8.0",
+    "framer-motion": "^10.16.5",
     "fs": "^0.0.1-security",
     "html-to-image": "^1.11.11",
     "jscrypto": "^1.0.3",
@@ -62,6 +68,7 @@
     "react-datetime-picker": "^5.5.3",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
+    "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
     "react-icons": "4.7.1",
     "react-popper": "^2.3.0",
@@ -72,7 +79,8 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^1.19.9",
-    "wagmi": "^1.4.7"
+    "wagmi": "^1.4.7",
+    "zod": "^3.22.4"
   },
   "resolutions": {
     "@types/react": "18.2"

@@ -6,6 +6,7 @@ import { FaDesktop } from 'react-icons/fa'
 import { Sidebar } from './Sidebar'
 import { PageMetadata } from '../utils/layout'
 import { DefaultAppSeo } from '../utils/DefaultAppSeo'
+import { PageHeader, PageHeaderDescription } from '@/components/utils/page-header'
 
 export interface LayoutProps {
   metadata?: PageMetadata
@@ -44,12 +45,12 @@ export const Layout = ({ children, metadata = {} }: LayoutProps) => {
 
       <div className="flex flex-col justify-center items-center p-8 space-y-4 h-screen text-center bg-black/50 sm:hidden">
         <FaDesktop size={48} />
-        <h1 className="text-2xl font-bold">Unsupported Viewport</h1>
-        <p>
+        <PageHeader className="text-2xl font-bold">Unsupported Viewport</PageHeader>
+        <PageHeaderDescription>
           The Terp Network Dashboard UI is best viewed on the big screen.
           <br />
           Please open The Dashboard on your tablet or desktop browser.
-        </p>
+        </PageHeaderDescription>
       </div>
     </div>
   )
