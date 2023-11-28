@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PageHeaderDescription, PageHeaderHeading } from "../utils/page-header";
 import { Input } from "@/components/ui/input"
 import { Button } from "../ui/button";
+import { useChain, useWallet } from "@cosmos-kit/react";
 
 
 
@@ -12,9 +13,10 @@ enum Page {
     // Submit,
   }
 
-
 export default function Claim() {
-
+    const { username, connect, disconnect, getOfflineSignerDirect, address, wallet, openView, status } = useChain(
+        'terpnettestnet'
+      );
         // which page to display
     const [page, setPage] = useState(Page.Claim);
     
@@ -137,13 +139,16 @@ const claimPage = (
     <div className="block w-full ">Terp Wallet Address</div>
 </div>
     <Input placeholder="terp1..." id="wallet-addr"/>
+{status !== 'Connected' ? (
+<div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
+<Button onClick={() => connect()} className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">Connect Wallet </Button>
+</div>
+):(
 <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
     <Button className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">Claim Badge</Button>
-    <Button variant="outline" className="inline-flex flex-non items-center px-4 py-2  rounded-lg gap-2 focus-visible:outline wallet-connect">Disconnect Wallet</Button>
+    <Button onClick={() => disconnect()} variant="outline" className="inline-flex flex-non items-center px-4 py-2  rounded-lg gap-2 focus-visible:outline wallet-connect">Disconnect Wallet</Button>
 </div>
-<div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
-<Button className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">Connect Wallet </Button>
-</div>
+)}
 </div>
 
 <div className="mt-8 flex flex-col gap-8 badge-data-content">
