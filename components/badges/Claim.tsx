@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { PageHeaderDescription, PageHeaderHeading } from "../utils/page-header";
 import { Input } from "@/components/ui/input"
-import { useDisclosure } from "@chakra-ui/react";
-import { FormControl, FormLabel } from "@/components/ui/form"
+import { FormHelperText, useDisclosure, FormControl } from "@chakra-ui/react";
 import { Button } from "../ui/button";
 import { useChain, useWallet } from "@cosmos-kit/react";
 import { BadgeResponse } from "@steak-enjoyers/badges.js/types/codegen/Hub.types";
@@ -21,8 +20,9 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "../ui/label";
-import { copy } from "./utils/clipboard";
+
 import TxModal from './components/TxModal'
+import { Link } from "@interchain-ui/react";
 
 enum Page {
     Claim = 1,
@@ -230,7 +230,7 @@ export default function Claim() {
             }
         });
 
-        
+
     }, [privkeyStr, idStr, idValid, store.wasmClient]);
 
     // whenver input owner address is changed, we need to validate it
@@ -352,43 +352,43 @@ export default function Claim() {
     async function getMintMsg() {
         // Check if idStr is not provided or is an empty string
         if (!idStr) {
-          throw new Error("idStr is required");
+            throw new Error("idStr is required");
         }
-      
+
         const privKey = Buffer.from(privkeyStr, "hex");
         const msg = `claim badge ${idStr} for user ${owner}`;
         const msgBytes = Buffer.from(msg, "utf8");
         const msgHashBytes = sha256(msgBytes);
         const { signature } = secp256k1.ecdsaSign(msgHashBytes, privKey);
-      
+
         const badge = await store.getBadge(Number(idStr));
-      
+
         if (badge.rule === "by_keys") {
-          return {
-            mint_by_keys: {
-              id: Number(idStr),
-              owner,
-              pubkey: Buffer.from(secp256k1.publicKeyCreate(privKey)).toString("hex"),
-              signature: Buffer.from(signature).toString("hex"),
-            },
-          };
+            return {
+                mint_by_keys: {
+                    id: Number(idStr),
+                    owner,
+                    pubkey: Buffer.from(secp256k1.publicKeyCreate(privKey)).toString("hex"),
+                    signature: Buffer.from(signature).toString("hex"),
+                },
+            };
         } else if ("by_key" in badge.rule) {
-          return {
-            mint_by_key: {
-              id: Number(idStr),
-              owner,
-              signature: Buffer.from(signature).toString("hex"),
-            },
-          };
+            return {
+                mint_by_key: {
+                    id: Number(idStr),
+                    owner,
+                    signature: Buffer.from(signature).toString("hex"),
+                },
+            };
         } else {
-          return {
-            mint_by_minter: {
-              id: Number(idStr),
-              owners: [owner],
-            },
-          };
+            return {
+                mint_by_minter: {
+                    id: Number(idStr),
+                    owners: [owner],
+                },
+            };
         }
-      }
+    }
 
     // when user closes the tx modal, we reset the page: revert back to the credentials page, and
     // empty the inputs
@@ -411,13 +411,14 @@ export default function Claim() {
                 <div className="badges-header"></div>
                 <div className="badges-toast"></div>
                 <div className="badges-title">
-                <PageHeaderHeading>Claim Your Badge</PageHeaderHeading>
+                    <PageHeaderHeading>Claim Your Badge</PageHeaderHeading>
                 </div>
                 <div className="badges-secondary-title">
-                <PageHeaderDescription >Enter the secret key to claim your badge.</PageHeaderDescription>
+                    <PageHeaderDescription >Enter the secret key to claim your badge.</PageHeaderDescription>
                 </div>
                 <div className="badges-secondary-title">
-                <PageHeaderDescription >Use Keplr or Metamask Snaps to create a wallet.</PageHeaderDescription>
+                    <PageHeaderDescription >Use <Link className="font-bold text-plumbus hover:underline" href="https://keplr.app">Keplr</Link> or  
+                    <Link className="font-bold text-plumbus hover:underline" href="https://metamask.io/snaps/"> Metamask Snaps</Link> to create a wallet.</PageHeaderDescription>
                 </div>
                 <div className="flex flex-col gap-8 mt-8">
                     <div className=" flex gap-4 badges-id-and-key-container">
@@ -436,25 +437,29 @@ export default function Claim() {
                         <div className="mb-1 flex justify-between">
                             <div className="block w-full ">Terp Network Wallet Address</div>
                         </div>
+                        {/* <FormControl mb="4" isInvalid={ownerValid !== null && !ownerValid}> */}
                         <Input
                             placeholder="terp1..."
                             id="wallet-addr"
                             defaultValue={status === 'Connected' ? address : ''}
+                            onChange={(event) => {
+                                setOwner(event.target.value);
+                            }}
                         />
                         {status !== 'Connected' ? (
                             <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
-
-                                <Button onClick={() => connect()} className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">Connect Wallet </Button>
+                                <Button onClick={() => connect()} className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">
+                                    Connect Wallet
+                                </Button>
                             </div>
                         ) : (
                             <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
-                                <Button
-                                    className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button"
-                                    
-                                    >
-                                    Preview 
+                              <TxModal isOpen={isTxModalOpen} onClose={onClosingTxModal} getMsg={getMintMsg} />   
+                                <Button onClick={() => disconnect()} variant="outline" className="inline-flex flex-non items-center px-4 py-2  rounded-lg gap-2 focus-visible:outline wallet-connect">
+                                    Disconnect Wallet
                                 </Button>
-                                <Button onClick={() => disconnect()} variant="outline" className="inline-flex flex-non items-center px-4 py-2  rounded-lg gap-2 focus-visible:outline wallet-connect">Disconnect Wallet</Button>
+
+
                             </div>
                         )}
                     </div>
