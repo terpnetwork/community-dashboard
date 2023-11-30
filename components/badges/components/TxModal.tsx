@@ -68,9 +68,10 @@ type Props = {
   getMsg: () => Promise<any>;
   isOpen: boolean;
   onClose: () => void;
+  isDisabled: boolean;
 };
 
-const TxModal: FC<Props> = ({ getMsg, isOpen, onClose }) => {
+const TxModal: FC<Props> = ({ getMsg, isDisabled, isOpen, onClose }) => {
   const store = useStore();
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false);
   const [txStatusHeader, setTxStatusHeader] = useState<string>();

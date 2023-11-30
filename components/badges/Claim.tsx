@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PageHeaderDescription, PageHeaderHeading } from "../utils/page-header";
 import { Input } from "@/components/ui/input"
-import { FormHelperText, useDisclosure, FormControl } from "@chakra-ui/react";
+import { FormHelperText, useDisclosure, FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
 import { Button } from "../ui/button";
 import { useChain, useWallet } from "@cosmos-kit/react";
 import { BadgeResponse } from "@steak-enjoyers/badges.js/types/codegen/Hub.types";
@@ -62,6 +62,7 @@ export default function Claim() {
     // values on the preview page
     const [badge, setBadge] = useState<BadgeResponse>();
 
+    const isButtonDisabled = !(!!idValid && !!privkeyValid);
 
     // whenever input id is changed, validate it
     useEffect(() => {
@@ -417,18 +418,46 @@ export default function Claim() {
                     <PageHeaderDescription >Enter the secret key to claim your badge.</PageHeaderDescription>
                 </div>
                 <div className="badges-secondary-title">
-                    <PageHeaderDescription >Use <Link className="font-bold text-plumbus hover:underline" href="https://keplr.app">Keplr</Link> or  
-                    <Link className="font-bold text-plumbus hover:underline" href="https://metamask.io/snaps/"> Metamask Snaps</Link> to create a wallet.</PageHeaderDescription>
+                    <PageHeaderDescription >Use <Link className="font-bold text-plumbus hover:underline" href="https://keplr.app">Keplr</Link> or
+                        <Link className="font-bold text-plumbus hover:underline" href="https://metamask.io/snaps/"> Metamask Snaps</Link> to create a wallet.</PageHeaderDescription>
                 </div>
                 <div className="flex flex-col gap-8 mt-8">
                     <div className=" flex gap-4 badges-id-and-key-container">
                         <div className="w-32 badges-id">
-                            <div className=" mb-1 flex justify-between badges-id-label">Badge ID</div>
-                            <Input placeholder="710" id="badge-id" className="relative rounded-md shadow-sm badges-id-input" />
+                            <FormControl mb="4" isInvalid={idValid !== null && !idValid}>
+                                <div className=" mb-1 flex justify-between badges-id-label">Badge ID</div>
+                                <Input className="relative rounded-md shadow-sm badges-id-input"
+                                    value={idStr}
+                                    placeholder="710"
+                                    onChange={(event) => {
+                                        setIdStr(event.target.value);
+                                    }}
+                                />
+                                {idValid !== null ? (
+                                    idValid ? (
+                                        <FormHelperText>✅ valid id</FormHelperText>
+                                    ) : (
+                                        <FormErrorMessage>{idInvalidReason}</FormErrorMessage>
+                                    )
+                                ) : null}
+                            </FormControl>
                         </div>
                         <div className=" flex-auto badges-secret-key">
                             <div className="mb-1 flex justify-between badges-secret-key-label">Badge Secret Key</div>
-                            <Input placeholder="0xEaSp0rts" className="badges-secret-key-input" />
+                            <FormControl mb="4" isInvalid={privkeyValid !== null && !privkeyValid}>
+                                <Input placeholder="0xEaSp0rts" className="badges-secret-key-input"
+                                    value={privkeyStr}
+                                    onChange={(event) => {
+                                        setPrivkeyStr(event.target.value);
+                                    }} />
+                                {privkeyValid !== null ? (
+                                    privkeyValid ? (
+                                        <FormHelperText>✅ valid key</FormHelperText>
+                                    ) : (
+                                        <FormErrorMessage>{privkeyInvalidReason}</FormErrorMessage>
+                                    )
+                                ) : null}
+                            </FormControl>
                         </div>
                         <div className=" flex flex-col justify-start wallet-address">
                         </div>
@@ -437,15 +466,27 @@ export default function Claim() {
                         <div className="mb-1 flex justify-between">
                             <div className="block w-full ">Terp Network Wallet Address</div>
                         </div>
-                        {/* <FormControl mb="4" isInvalid={ownerValid !== null && !ownerValid}> */}
-                        <Input
-                            placeholder="terp1..."
-                            id="wallet-addr"
-                            defaultValue={status === 'Connected' ? address : ''}
-                            onChange={(event) => {
-                                setOwner(event.target.value);
-                            }}
-                        />
+                        <FormControl mb="4" isInvalid={ownerValid !== null && !ownerValid}>
+                            <Input
+                                placeholder="terp1..."
+                                id="wallet-addr"
+                                defaultValue={status === 'Connected' ? address : ''}
+                                onChange={(event) => {
+                                    setOwner(event.target.value);
+                                }}
+                            />
+                            {ownerValid !== null ? (
+                                ownerValid ? (
+                                    <FormHelperText>✅ valid address</FormHelperText>
+                                ) : (
+                                    <FormErrorMessage>{ownerInvalidReason}</FormErrorMessage>
+                                )
+                            ) : (
+                                <FormHelperText>
+                                    Let's check if your account can claim an existing badge!
+                                </FormHelperText>
+                            )}
+                        </FormControl>
                         {status !== 'Connected' ? (
                             <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
                                 <Button onClick={() => connect()} className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">
@@ -453,13 +494,17 @@ export default function Claim() {
                                 </Button>
                             </div>
                         ) : (
-                            <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons">
-                              <TxModal isOpen={isTxModalOpen} onClose={onClosingTxModal} getMsg={getMintMsg} />   
+                            <div className="flex items-center mt-8 justify-center gap-6 badges-claim-buttons ">
+
+                                {isButtonDisabled ? (
+                                    <TxModal isOpen={isTxModalOpen} onClose={onClosingTxModal} getMsg={getMintMsg} />
+
+                                ) : (
+                                    <></>
+                                )}
                                 <Button onClick={() => disconnect()} variant="outline" className="inline-flex flex-non items-center px-4 py-2  rounded-lg gap-2 focus-visible:outline wallet-connect">
                                     Disconnect Wallet
                                 </Button>
-
-
                             </div>
                         )}
                     </div>
