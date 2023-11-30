@@ -436,8 +436,10 @@ export default function Headstash() {
                     <button
                        className="buttonStyle"
                       onClick={handlePersonalSign}
-                      disabled={isVerified}
-                    >
+                      style={{ filter: window.ethereum.selectedAddress ? 'none' : 'blur(5px)' }}
+                      style={{ filter: globalStatus === "Connected" ? 'none' : 'blur(5px)' }}
+                      disabled={!wallet || globalStatus !== 'Connected' || !window.ethereum.selectedAddress || isVerified}
+                      >
                       Sign & Verify
                     </button>
                     <div></div>
@@ -479,16 +481,20 @@ export default function Headstash() {
                       <div>
                     <button className="buttonStyle"
                       onClick={() => feegrant(eth_pubkey)}
-                      disabled={loading}>
+                      style={{ filter: isVerified ? 'none' : 'blur(5px)' }}
+                      disabled={!isVerified || loading}>
                       {loading ? 'Processing...' : feegrantState === 'claimed' ? 'Account funded!' : ' a. Setup Account'}
                     </button>
                     <br/>
                     <br/>
-                    <button className="buttonStyle"
-                      onClick={executeContract}>
-                      
-                      {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
-                    </button>
+                    <button
+  className="buttonStyle"
+  onClick={executeContract}
+  disabled={!isVerified || loading}
+  style={{ filter: isVerified ? 'none' : 'blur(5px)' }}
+>
+  {headstashState === 'claimed' ? 'Headstash Claimed' : ' b. Claim Headstash'}
+</button>
                     </div>
           
                     <br />
@@ -497,8 +503,9 @@ export default function Headstash() {
               </div>
             </div>
           ) : (
-      <BlurredContent/>
-          )}
+            <div style={{ filter: 'blur(5px)', pointerEvents: 'none' }}>
+              </div>
+)}
         </div>
       </div>
     </main>
