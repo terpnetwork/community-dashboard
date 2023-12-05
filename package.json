@@ -27,6 +27,8 @@
     "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.2",
     "@interchain-ui/react": "1.11.0",
+    "@metamask/sdk-react": "^0.14.1",
+    "@metamask/sdk-react-ui": "^0.14.1",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",

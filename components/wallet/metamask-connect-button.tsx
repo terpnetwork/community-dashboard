@@ -1,6 +1,6 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import {
-  useAccount,
   useDisconnect,
 } from 'wagmi'
 import {getShortAddress} from '@/components/badges/utils/getShortAddress' 
@@ -14,18 +14,15 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   handleEthPubkey,
 }) => {
   const [eth_pubkey, setEthPubkey] = useState<string>("");
-  const {  status  } = useAccount();
-  // const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
   const { disconnect } = useDisconnect();
 
   const connectWallet = async () => {
-    if (status !== 'connected' ) {
+    if ((window as any).ethereum) {
         const addressArray = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
-        const userAddress = addressArray[0];
         const obj = {
-          address: userAddress,
+          address: addressArray[0],
         };
         return obj;
     } else {
@@ -36,8 +33,8 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   };
 
   const getConnectedMetamaskWallet = async () => {
-    if (status === 'connected') {
-        const addressArray = await (window).ethereum.request({
+    if ((window as any).ethereum) {
+        const addressArray = await (window as any).ethereum.request({
           method: "eth_accounts",
         });
         if (addressArray.length > 0) {
@@ -61,7 +58,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       const walletResponse = await connectWallet();
       setEthPubkey(walletResponse.address);
     } catch (e) {
-      toast.error(`${e}`)
+    toast.error(`${e}`)
     }
   };
 
@@ -70,13 +67,13 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       await disconnect();
       setEthPubkey("");
     } catch (e) {
-      toast.error(`${e}`)
+  toast.error(`${e}`)
     }
   };
 
   const addWalletListener = () => {
-    if (status === 'connected') {
-      (window).ethereum.on("accountsChanged", (accounts: string[]) => {
+    if ((window as any).ethereum) {
+      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
           setEthPubkey(accounts[0]);
         } else {
@@ -96,7 +93,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       setEthPubkey(address.address);
       addWalletListener();
     } catch (e) {
-      toast.error(`${e}`)
+toast.error(`${e}`)
     }
   };
 

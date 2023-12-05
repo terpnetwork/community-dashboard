@@ -5,7 +5,7 @@ import MetamaskConnectButton from "@/components/wallet/metamask-connect-button";
 import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import { useIsClient } from "@/hooks";
-import { SignedMessage } from "@/contracts/headstash";
+// import { SignedMessage } from "@/contracts/headstash";
 import { headstashData } from '../../lib/headstash/headstashData';
 import { proofData } from '../../lib/headstash/proofData';
 import { toUtf8 } from "@cosmjs/encoding";
@@ -13,8 +13,9 @@ import { assertIsDeliverTxSuccess } from "@cosmjs/stargate"
 import { SigningCosmWasmClient, MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { getShortSig } from "@/utils/getShortSig";
 import { Button } from "@/components/ui/button";
+import { useAccount } from "wagmi";
 
-// const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
+const contractAddress = "terp1s7xusjh42jlakhgs2a6wgxlvf9ynxuz87z6tpg2wwam7z650hnysp8v93n";
 const chainNames_1 = ["terpnettestnet"];
 const endpoint = "https://terp-testnet-rpc.itrocket.net"; 
 type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
@@ -22,23 +23,24 @@ type ClaimState = 'loading' | 'not_claimed' | 'claimed' | 'no_allocation'
 
 export default function Headstash() {
   // const router = useRouter();
+  // const [claimMsg] = useState('');
+  // const [signature] = useState('');
+  // const [executionResult, setExecutionResult] = useState('');
   // const headstashAirdropContract = useContracts().headstashAirdrop
+  // const [ setSignedMessage] = useState<SignedMessage | undefined>(undefined);
+  // const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
   const { connect, disconnect, getOfflineSignerDirect, address, wallet, status, } = useChain(chainNames_1[0]); // cosmos-kit
+  const { isConnected } = useAccount();
   const isClient = useIsClient();
   const [amount, setAmount] = useState('');
-  const [claimMsg] = useState('');
   const [eth_pubkey, setEthPubkey] = useState('');
   const [eth_sig] = useState('');
-  // const [executionResult, setExecutionResult] = useState('');
   const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
   const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
   const [headstashState] = useState<ClaimState>('loading');
   const [feegrantState, setFeegrantState] = useState<ClaimState>('not_claimed');
   const [loading, setLoading] = useState(false);
   const [proofs, setProofs] = useState<string[]>(['']);
-  const [signature] = useState('');
-  const [setSignedMessage] = useState<SignedMessage | undefined>(undefined);
-  const contractAddress = "terp1s7xusjh42jlakhgs2a6wgxlvf9ynxuz87z6tpg2wwam7z650hnysp8v93n";
   const [isVerified, setIsVerified] = useState(false);
 
   // WALLET CONFIG //
@@ -55,32 +57,19 @@ export default function Headstash() {
     };
 
     // Check if window.ethereum is available
-    if (window.ethereum) {
+    if (isConnected) {
       // Listen for wallet disconnect events
       window.ethereum.on('disconnect', handleWalletDisconnect);
     }
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      if (window.ethereum) {
+      if (isConnected) {
         window.ethereum.off('disconnect', handleWalletDisconnect);
         resetProofs();
       }
     };
   }, []);
-
-  // useEffect(() => {
-  //   ;(async () => {
-  //     if (variables?.message && signMessageData) {
-  //       const recoveredAddress = await recoverMessageAddress({
-  //         message: variables?.message,
-  //         signature: signMessageData,
-  //       })
-  //       setRecoveredAddress(recoveredAddress)
-  //     }
-  //   })()
-  // }, [signMessageData, variables?.message])
-
 
   // connect Keplr
   useEffect(() => {
@@ -164,10 +153,6 @@ export default function Headstash() {
   // TODO: manual fetch proof button
 
 
-  // set the signed claim message. 
-  useEffect(() => {
-    setSignedMessage({ claim_msg: claimMsg, signature })
-  }, [signature, claimMsg])
 
   if (!isClient) return null;
 
@@ -214,13 +199,13 @@ export default function Headstash() {
   const handlePersonalSign = async () => {
     try {
       // ensure metamask is connected
-      if (status !== 'Connected' || !window.ethereum.selectedAddress) {
+      if (status !== 'Connected' || !eth_pubkey) {
         toast.error(" Unable to sign verification message. Please make sure both Metamask & the desired Interchain Terp account is connected.");
         return;
       }
       if (address !== undefined) {
         const terpAddress: string = address.toString();
-        const from = window.ethereum.selectedAddress;
+        const from = eth_pubkey;
         const cosmosWallet = terpAddress;
         const msg = `0x${Buffer.from(cosmosWallet, 'utf8').toString('hex')}`;
         const sign = await window.ethereum.request({
@@ -234,7 +219,7 @@ export default function Headstash() {
           timestamp: new Date().toISOString(),
         };
 
-        console.log("Personal Sign Signature:", sig);
+        console.log("Personal Sign Signature:", sig);        
 
         // Save verification details to local storage if available
       if (isClient && typeof localStorage !== "undefined") {
@@ -367,7 +352,7 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
               <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading>
-              <PageHeaderDescription>First let`&apos;s check if your account was included in the headstash airdrop. Press the button to connect with a Metamask Wallet. </PageHeaderDescription>
+              <PageHeaderDescription>First let&apos;s check if your account was included in the headstash airdrop. Press the button to connect with a Metamask Wallet. </PageHeaderDescription>
               <br />
               <br />  
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
@@ -408,13 +393,12 @@ export default function Headstash() {
                     <button
                       className="buttonStyle"
                       onClick={handlePersonalSign}
-                      style={{filter: window.ethereum.selectedAddress || status === "Connected" ? 'none' : 'blur(5px)'}} 
+                      style={{filter: eth_pubkey || status === "Connected" ? 'none' : 'blur(5px)'}} 
                       // disabled={!wallet || status !== 'Connected' || !window.ethereum.selectedAddress || isVerified}
                     >
                       Sign & Verify
                     </button>
                     <div></div>
-                  {/*<SignMessage/>*/}
                     <br />
                     {ethSigDetails ? (
                       <PageHeaderDescription >
@@ -444,7 +428,7 @@ export default function Headstash() {
                   <div className="step-one-card">
                     <PageHeaderHeading>4. Setup Terp Account & <br /> Claim Your Headstash</PageHeaderHeading>
                     <PageHeaderDescription>
-                      Transactions on Terp Network require fee`$apos;`s, <br /> We`$apos;ve got you covered for this one! 👍
+                      Transactions on Terp Network require fees, <br /> Use the faucet for this one! 👍
                     </PageHeaderDescription>
                     <br />
                     <br />

@@ -1,17 +1,13 @@
-
-
-import { useRef, useState } from 'react'
-
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+import { useRef } from 'react'
 import { Timezone, setTimezone, useGlobalSettings } from '../contexts/globalSettings'
 import { Button } from './Button'
-
 export interface SettingsModalProps {
   timezone?: Timezone
 }
-export const SettingsModal = (props: SettingsModalProps) => {
+export const SettingsModal = () => {
   const globalSettings = useGlobalSettings()
   // const [isChecked, setIsChecked] = useState(false)
-
   const checkBoxRef = useRef<HTMLInputElement>(null)
 
   return (

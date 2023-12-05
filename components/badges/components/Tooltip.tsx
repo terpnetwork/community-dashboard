@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import clsx from 'clsx'
 import type { ComponentProps, ReactElement, ReactNode } from 'react'
 import { cloneElement, useState } from 'react'

@@ -1,9 +1,13 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+// import truncateString from "@/components/badges/utils/helpers"
+// import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input"
+// import { copy } from "../utils/clipboard"
 import { Button, Flex, Link, Spinner, Text } from "@chakra-ui/react";
 import { FC, useState, useEffect } from "react";
 import SuccessIcon from "./TxSuccessIcon";
 import FailedIcon from "./TxFailedIcon";
 import ExternalLinkIcon from "./ExternalLinkIcon";
-// import truncateString from "@/components/badges/utils/helpers"
 import { useStore } from '@/components/badges/utils/store'
 import {
   Dialog,
@@ -15,10 +19,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input"
-// import { copy } from "../utils/clipboard"
 import React from "react";
+import { truncateString } from "../utils/helpers";
 
 
 function SpinnerWrapper() {

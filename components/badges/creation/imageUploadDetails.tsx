@@ -111,6 +111,7 @@ export const ImageUploadDetails = ({ onChange, mintRule }: ImageUploadDetailsPro
           .trim(),
       }
       onChange(data)
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.message, { style: { maxWidth: 'none' } })
     }

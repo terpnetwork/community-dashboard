@@ -6,9 +6,9 @@ import router from "next/router";
 function toHeadstash() {
     router.push('/w/headstash');
 }
-function toBadges() {
-  router.push('/w/badges');
-}
+// function toBadges() {
+//   router.push('/w/badges');
+// }
 
 
 export function DemoDatePicker() {
@@ -26,7 +26,7 @@ export function DemoDatePicker() {
       </Button>
     </Card>
     <br/>
-    <Card>
+    {/* <Card>
         <Button onClick={toBadges} size="lg"
         className=" pt-6rounded-lg border border-transparent transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
    
@@ -35,7 +35,7 @@ export function DemoDatePicker() {
         </div>
     
       </Button>
-    </Card>
+    </Card> */}
     </>
   )
 }

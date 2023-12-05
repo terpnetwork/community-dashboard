@@ -1,26 +1,23 @@
-
-import { useRef, useState } from 'react'
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+import { useRef } from 'react'
 import { FaCopy, FaEraser } from 'react-icons/fa'
-
 
 import type { LogItem } from '../contexts/log'
 import { removeLogItem, setLogItemList, useLogStore } from '../contexts/log'
 import { Button } from './Button'
 import { Tooltip } from './Tooltip'
-import { copy } from '../utils/clipboard'
+import { copy } from '../../utils/clipboard'
 
 export interface LogModalProps {
   tempLogItem?: LogItem
 }
-export const LogModal = (props: LogModalProps) => {
+export const LogModal = () => {
   const logs = useLogStore()
   // const [isChecked, setIsChecked] = useState(false)
 
   const checkBoxRef = useRef<HTMLInputElement>(null)
 
-  const handleCheckBox = () => {
-    checkBoxRef.current?.click()
-  }
+
 
   return (
     <div>

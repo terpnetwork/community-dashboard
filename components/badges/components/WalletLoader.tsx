@@ -11,8 +11,9 @@ import { useWallet } from 'utils/wallet'
 import { WalletButton } from './WalletButton'
 import { WalletPanelButton } from './WalletPanelButton'
 import { getShortAddress } from '../utils/getShortAddress'
-import { copy } from '../utils/clipboard'
+
 import { convertDenomToReadable } from '../utils/convertDenomToReadable'
+import { copy } from '../utils/clipboard'
 
 export const WalletLoader = () => {
   const {

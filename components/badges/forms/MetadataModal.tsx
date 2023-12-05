@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'

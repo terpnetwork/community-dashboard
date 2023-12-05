@@ -1,7 +1,7 @@
 import { Tooltip } from '@interchain-ui/react'
 import { useState } from 'react'
 import { FaChevronDown, FaRegClipboard, FaTimes } from 'react-icons/fa'
-import { copy } from '../utils/clipboard'
+import { copy } from '../../utils/clipboard'
 
 
 

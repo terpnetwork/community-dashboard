@@ -50,6 +50,7 @@ export const metadata: Metadata = {
   ],
 }
 
+// wagmi config  
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet],
   [publicProvider()],
@@ -64,7 +65,6 @@ const config = createConfig({
 })
 
 export default function App({ Component, pageProps }: AppProps) {
-
   return (
     <RootLayout>
       <QueryClientProvider client={queryClient}>

@@ -1,16 +1,12 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+// import BrandText from 'public/brand/brand-text.svg'
 
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { FaCog } from 'react-icons/fa'
-// import BrandText from 'public/brand/brand-text.svg'
 import { useWallet } from 'utils/wallet'
-import { BADGE_HUB_ADDRESS, BASE_FACTORY_ADDRESS, NETWORK, OPEN_EDITION_FACTORY_ADDRESS } from '../utils/constants'
-import { IncomeDashboardDisclaimer } from './IncomeDashboardDisclaimer'
-import { LogModal } from './LogModal'
-import { SettingsModal } from './SettingsModal'
+import { BADGE_HUB_ADDRESS } from '../utils/constants'
 import { SidebarLayout } from './SidebarLayout'
 import { WalletLoader } from './WalletLoader'
 import { Timezone, setTimezone } from '../contexts/globalSettings'
@@ -56,7 +52,7 @@ export const Sidebar = () => {
                 className={clsx(
                   'z-40 text-xl font-bold group-hover:text-white bg-transparent rounded-lg small-caps',
                   'hover:bg-white/5 transition-colors',
-                  router.asPath.includes('/w/badges/') ? 'text-white' : 'text-gray',
+                  router.asPath.includes('/w/headstash/') ? 'text-white' : 'text-gray',
                 )}
               >
                 <Link href="/w/headstash"> Headstash Airdrop </Link>
@@ -76,7 +72,7 @@ export const Sidebar = () => {
             </li>
           </ul>
         </Conditional>
-      <ul className="group p-2 w-full bg-transparent menu rounded-box">
+      {/* <ul className="group p-2 w-full bg-transparent menu rounded-box">
             <li tabIndex={1}>
               <span
                 className={clsx(
@@ -126,7 +122,7 @@ export const Sidebar = () => {
                 </li>
               </ul>
             </li>
-          </ul>
+          </ul> */}
 
       </div>
 
