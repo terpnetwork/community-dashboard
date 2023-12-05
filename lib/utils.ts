@@ -5,8 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 export const WEBSITE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL
-export const HEADSTASH_CODE_ID = parseInt(process.env.NEXT_PUBLIC_HEADSTASH_CODE_ID, 10)
-export const HEADSTASH_ACCOUNT_LIMIT = parseInt(process.env.NEXT_PUBLIC_HEADSTASH_ACCOUNT_LIMIT, 10)
+// export const HEADSTASH_CODE_ID = parseInt(process.env.NEXT_PUBLIC_HEADSTASH_CODE_ID, 10)
+// export const HEADSTASH_ACCOUNT_LIMIT = parseInt(process.env.NEXT_PUBLIC_HEADSTASH_ACCOUNT_LIMIT, 10)
 
 export const NETWORK = process.env.NEXT_PUBLIC_NETWORK
 
@@ -17,13 +17,13 @@ export const getAirdropDate = (date: number, type: string | null) => {
   return `${d.toLocaleDateString('en-US')} approx`
 }
 
-export const getExecuteFee = () => {
-  const config = getConfig(NETWORK)
-  return {
-    amount: coins(500000, config.feeToken),
-    gas: '1000000',
-  }
-}
+// export const getExecuteFee = () => {
+//   const config = getConfig(NETWORK)
+//   return {
+//     amount: coins(500000, config.feeToken),
+//     gas: '1000000',
+//   }
+// }
 
 
 export interface HeadstashAirdropProps {

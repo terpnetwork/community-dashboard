@@ -18,7 +18,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
 
   const connectWallet = async () => {
     if ((window as any).ethereum) {
-        const addressArray = await window.ethereum.request({
+        const addressArray = await (window as any).ethereum.request({
           method: "eth_requestAccounts",
         });
         const obj = {

@@ -1,17 +1,18 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 // import BrandText from 'public/brand/brand-text.svg'
 
+// import { BADGE_HUB_ADDRESS } from '../utils/constants'
+// import { Conditional } from '../utils/conditional'
+
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useWallet } from 'utils/wallet'
-import { BADGE_HUB_ADDRESS } from '../utils/constants'
 import { SidebarLayout } from './SidebarLayout'
 import { WalletLoader } from './WalletLoader'
 import { Timezone, setTimezone } from '../contexts/globalSettings'
 import { setLogItemList, useLogStore } from '../contexts/log'
-import { Conditional } from '../utils/conditional'
 import { footerLinks, socialsLinks } from '../utils/links'
 
 export const Sidebar = () => {
@@ -45,7 +46,6 @@ export const Sidebar = () => {
 
     
       <div className="absolute top-[20%] left-[5%] mt-2">
-      <Conditional test={BADGE_HUB_ADDRESS !== undefined}>
           <ul className="group p-2 w-full bg-transparent menu rounded-box">
             <li tabIndex={1}>
               <span
@@ -71,7 +71,6 @@ export const Sidebar = () => {
               </ul>
             </li>
           </ul>
-        </Conditional>
       {/* <ul className="group p-2 w-full bg-transparent menu rounded-box">
             <li tabIndex={1}>
               <span

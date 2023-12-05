@@ -1,4 +1,5 @@
-  export function getShortSig(str) {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export function getShortSig(str: string | any[]) {
     if (str && str.length >= 10) {
       const firstFive = str.slice(0, 5);
       const lastFive = str.slice(-5);

@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast'
 import { useChain } from "@cosmos-kit/react";
@@ -59,13 +60,13 @@ export default function Headstash() {
     // Check if window.ethereum is available
     if (isConnected) {
       // Listen for wallet disconnect events
-      window.ethereum.on('disconnect', handleWalletDisconnect);
+      (window as any).ethereum.on('disconnect', handleWalletDisconnect);
     }
 
     // Cleanup the event listener when the component unmounts
     return () => {
       if (isConnected) {
-        window.ethereum.off('disconnect', handleWalletDisconnect);
+        (window as any).ethereum.off('disconnect', handleWalletDisconnect);
         resetProofs();
       }
     };
@@ -208,7 +209,7 @@ export default function Headstash() {
         const from = eth_pubkey;
         const cosmosWallet = terpAddress;
         const msg = `0x${Buffer.from(cosmosWallet, 'utf8').toString('hex')}`;
-        const sign = await window.ethereum.request({
+        const sign = await (window as any).ethereum.request({
           method: 'personal_sign',
           params: [msg, from],
         });

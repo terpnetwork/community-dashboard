@@ -13,7 +13,7 @@ export const links = {
   Twitter: `https://twitter.com/stargazezone`,
   Explorer: BLOCK_EXPLORER_URL,
   Documentation: 'https://docs.stargaze.zone/guides/stargaze-studio',
-  Switch: `${NETWORK === 'mainnet' ? 'https://studio.publicawesome.dev' : 'https://studio.stargaze.zone'}`,
+  Switch: `${NETWORK === 'terpnettestnet' ? 'https://test.dash.terp.network' : 'https://dash.terp.network'}`,
 }
 
 export const footerLinks = [

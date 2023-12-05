@@ -2,8 +2,9 @@ import { WalletStatus } from "@cosmos-kit/core";
 import { Badge } from "@/components/ui/badge";
 import React, { ReactNode, useEffect, useState } from "react";
 
-import { CopyAddressType } from "@/types";
+
 import Image from "next/image";
+import { CopyAddressType } from "@/types/nav";
 
 export function stringTruncateFromdiv(str: string, maxLength: number) {
   const midChar = "…"; // character to insert into the center of the result

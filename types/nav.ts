@@ -16,3 +16,12 @@ export interface NavItemWithChildren extends NavItem {
 export interface MainNavItem extends NavItem {}
 
 export interface SidebarNavItem extends NavItemWithChildren {}
+
+export type CopyAddressType = {
+  address?: string;
+  walletIcon?: string;
+  isLoading?: boolean;
+  maxDisplayLength?: number;
+  isRound?: boolean;
+  size?: string;
+};
