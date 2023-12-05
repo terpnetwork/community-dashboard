@@ -13,7 +13,7 @@ export const ChainWalletCard = ({
   chainName: ChainName;
   type: "address-in-modal" | "address-on-page";
 }) => {
-  const { chain, status, address, openView, chainWallet, walletRepo } =
+  const { chain, status, address, openView } =
     useChain(chainName);
   const isClient = useIsClient();
 

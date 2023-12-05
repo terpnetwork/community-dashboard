@@ -1,4 +1,4 @@
-interface HeadstashData {
+export interface HeadstashData {
   address: string;
   amount: string;
 }

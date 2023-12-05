@@ -1,3 +1,10 @@
 {
-  "extends": "next/core-web-vitals"
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "eslint-comments/disable-enable-pair": "off"
+  },
+  "extends": ["next/core-web-vitals",
+  "eslint:recommended",
+  "plugin:@typescript-eslint/recommended"]
 }
