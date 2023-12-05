@@ -24,7 +24,6 @@ interface GetConfigResponse {
 
 interface GetMerkleRootResponse {
   merkle_root: string
-  stage: number
   start: Expiration
   expiration: Expiration
   total_amount: string
@@ -49,11 +48,10 @@ export interface HeadstashAirdropInstance {
 
   // Queries
   getConfig: () => Promise<GetConfigResponse>
-  getMerkleRoot: (stage: number) => Promise<GetMerkleRootResponse>
-  getLatestStage: () => Promise<number>
-  isClaimed: (address: string, stage: number) => Promise<boolean>
-  totalClaimed: (stage: number) => Promise<string>
-  isPaused: (stage: number) => Promise<boolean>
+  getMerkleRoot: () => Promise<GetMerkleRootResponse>
+  isClaimed: (address: string) => Promise<boolean>
+  totalClaimed: () => Promise<string>
+  isPaused: () => Promise<boolean>
   getContractVersion: () => Promise<string>
 
   // Execute
@@ -65,19 +63,18 @@ export interface HeadstashAirdropInstance {
     expiration: Expiration,
     total_amount: number,
   ) => Promise<string>
-  claim: (stage: number, amount: string, eth_pubkey: string, eth_sig: string, proof: string[], signedMessage?: SignedMessage) => Promise<string>
-  burn: (stage: number) => Promise<string>
+  claim: ( amount: string, eth_pubkey: string, eth_sig: string, proof: string[], signedMessage?: SignedMessage) => Promise<string>
+  burn: () => Promise<string>
   burnAll: () => Promise<string>
-  withdraw: (stage: number, address: string) => Promise<string>
+  withdraw: ( address: string) => Promise<string>
   withdrawAll: (address: string, amount?: number) => Promise<string>
-  pause: (stage: number) => Promise<string>
-  resume: (stage: number, newExpiration?: Expiration) => Promise<string>
+  pause: () => Promise<string>
+  resume: ( newExpiration?: Expiration) => Promise<string>
   // registerAndReleaseEscrow: (
   //   merkleRoot: string,
   //   start: Expiration,
   //   expiration: Expiration,
   //   totalAmount: number,
-  //   stage: number,
   //   hrp?: string,
   // ) => Promise<ExecuteWithSignDataResponse>
   // depositEscrow: () => Promise<ExecuteWithSignDataResponse>
@@ -92,13 +89,11 @@ export interface HeadstashAirdropMessages {
   //   start: Expiration,
   //   expiration: Expiration,
   //   totalAmount: number,
-  //   stage: number,
   //   hrp?: string,
   // ) => [RegisterMessage, ReleaseEscrowMessage]
   // depositEscrow: (headstashAddress: string) => DepositEscrowMessage
   claim: (
     headstashAddress: string,
-    stage: number,
     amount: string,
     eth_pubkey: string,
     eth_sig: string,
@@ -106,12 +101,12 @@ export interface HeadstashAirdropMessages {
     signedMessage?: SignedMessage,
   ) => ClaimMessage
   fundWithSend: (recipient: string, amount: string) => FundWithSendMessage
-  burn: (headstashAddress: string, stage: number) => BurnMessage
+  burn: (headstashAddress: string) => BurnMessage
   burnAll: (headstashAddress: string) => BurnAllMessage
-  withdraw: (headstashAddress: string, stage: number, address: string) => WithdrawMessage
+  withdraw: (headstashAddress: string, address: string) => WithdrawMessage
   withdrawAll: (headstashAddress: string, address: string, amount?: number) => WithdrawAllMessage
-  pause: (headstashAddress: string, stage: number) => PauseMessage
-  resume: (headstashAddress: string, stage: number, new_expiration?: Expiration) => ResumeMessage
+  pause: (headstashAddress: string) => PauseMessage
+  resume: (headstashAddress: string, new_expiration?: Expiration) => ResumeMessage
 }
 
 export interface InstantiateMessage {
@@ -144,7 +139,6 @@ export interface RegisterMessage {
 //   msg: {
 //     release_locked_funds: {
 //       airdrop_addr: string
-//       stage: number
 //     }
 //   }
 //   funds: Coin[]
@@ -166,7 +160,6 @@ export interface ClaimMessage {
   contract: string
   msg: {
     claim: {
-      stage: number
       amount: string
       eth_pubkey: string
       eth_sig: string
@@ -188,7 +181,6 @@ export interface BurnMessage {
   contract: string
   msg: {
     burn: {
-      stage: number
     }
   }
   funds: Coin[]
@@ -208,7 +200,6 @@ export interface WithdrawMessage {
   contract: string
   msg: {
     withdraw: {
-      stage: number
       address: string
     }
   }
@@ -232,7 +223,6 @@ export interface PauseMessage {
   contract: string
   msg: {
     pause: {
-      stage: number
     }
   }
   funds: Coin[]
@@ -242,7 +232,6 @@ export interface ResumeMessage {
   contract: string
   msg: {
     resume: {
-      stage: number
       new_expiration?: Expiration
     }
   }
@@ -273,29 +262,23 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       })
     }
 
-    const getMerkleRoot = async (stage: number): Promise<GetMerkleRootResponse> => {
+    const getMerkleRoot = async (): Promise<GetMerkleRootResponse> => {
       return client.queryContractSmart(contractAddress, {
-        merkle_root: { stage },
+        merkle_root: {  },
       })
     }
 
-    const getLatestStage = async (): Promise<number> => {
-      const data = await client.queryContractSmart(contractAddress, {
-        latest_stage: {},
-      })
-      return data.latest_stage
-    }
 
-    const isClaimed = async (address: string, stage: number): Promise<boolean> => {
+    const isClaimed = async (address: string ): Promise<boolean> => {
       const data = await client.queryContractSmart(contractAddress, {
-        is_claimed: { address, stage },
+        is_claimed: { address  },
       })
       return data.is_claimed
     }
 
-    const isPaused = async (stage: number): Promise<boolean> => {
+    const isPaused = async (): Promise<boolean> => {
       const data = await client.queryContractSmart(contractAddress, {
-        is_paused: { stage },
+        is_paused: { },
       })
       return data.is_paused
     }
@@ -310,9 +293,9 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       return JSON.parse(new TextDecoder().decode(data as Uint8Array)).version
     }
 
-    const totalClaimed = async (stage: number): Promise<string> => {
+    const totalClaimed = async (): Promise<string> => {
       const data = await client.queryContractSmart(contractAddress, {
-        total_claimed: { stage },
+        total_claimed: { },
       })
       return data.total_claimed
     }
@@ -351,7 +334,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
     }
 
     const claim = async (
-      stage: number,
       amount: string,
       eth_pubkey: string,
       eth_sig: string,
@@ -361,14 +343,14 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       const result = await client.execute(
         txSigner,
         contractAddress,
-        { claim: { stage, amount, eth_pubkey, eth_sig, proof, sig_info: signedMessage } },
+        { claim: {  amount, eth_pubkey, eth_sig, proof, sig_info: signedMessage } },
         fee,
       )
       return result.transactionHash
     }
 
-    const burn = async (stage: number): Promise<string> => {
-      const result = await client.execute(txSigner, contractAddress, { burn: { stage } }, fee)
+    const burn = async (): Promise<string> => {
+      const result = await client.execute(txSigner, contractAddress, { burn: { } }, fee)
       return result.transactionHash
     }
     const burnAll = async (): Promise<string> => {
@@ -376,8 +358,8 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       return result.transactionHash
     }
 
-    const withdraw = async (stage: number, address: string): Promise<string> => {
-      const result = await client.execute(txSigner, contractAddress, { withdraw: { stage, address } }, fee)
+    const withdraw = async ( address: string): Promise<string> => {
+      const result = await client.execute(txSigner, contractAddress, { withdraw: {  address } }, fee)
       return result.transactionHash
     }
 
@@ -391,16 +373,16 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       return result.transactionHash
     }
 
-    const pause = async (stage: number): Promise<string> => {
-      const result = await client.execute(txSigner, contractAddress, { pause: { stage } }, fee)
+    const pause = async (): Promise<string> => {
+      const result = await client.execute(txSigner, contractAddress, { pause: {  } }, fee)
       return result.transactionHash
     }
 
-    const resume = async (stage: number, newExpiration?: Expiration): Promise<string> => {
+    const resume = async ( newExpiration?: Expiration): Promise<string> => {
       const result = await client.execute(
         txSigner,
         contractAddress,
-        { resume: { stage, new_expiration: newExpiration } },
+        { resume: {  new_expiration: newExpiration } },
         fee,
       )
       return result.transactionHash
@@ -411,7 +393,7 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
     //   start: Expiration,
     //   expiration: Expiration,
     //   totalAmount: number,
-    //   stage: number,
+    //   ,
     //   hrp?: string,
     // ): Promise<ExecuteWithSignDataResponse> => {
     //   const signed = await client.sign(
@@ -446,7 +428,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
     //             JSON.stringify({
     //               release_locked_funds: {
     //                 airdrop_addr: contractAddress,
-    //                 stage,
     //               },
     //             }),
     //           ),
@@ -549,7 +530,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       contractAddress,
       getConfig,
       getMerkleRoot,
-      getLatestStage,
       isClaimed,
       isPaused,
       getContractVersion,
@@ -606,7 +586,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
     //   start: Expiration,
     //   expiration: Expiration,
     //   totalAmount: number,
-    //   stage: number,
     //   hrp?: string,
     // ): [RegisterMessage, ReleaseEscrowMessage] => {
     //   return [
@@ -630,7 +609,7 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
     //       msg: {
     //         release_locked_funds: {
     //           airdrop_addr: headstashAddress,
-    //           stage,
+
     //         },
     //       },
     //       funds: [],
@@ -653,7 +632,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
 
     const claim = (
       headstashAddress: string,
-      stage: number,
       amount: string,
       eth_pubkey: string,
       eth_sig: string,
@@ -665,7 +643,6 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
         contract: headstashAddress,
         msg: {
           claim: {
-            stage,
             amount,
             eth_pubkey,
             eth_sig,
@@ -677,35 +654,33 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       }
     }
 
-    const burn = (headstashAddress: string, stage: number): BurnMessage => {
-      return {
-        sender: txSigner,
-        contract: headstashAddress,
-        msg: {
-          burn: {
-            stage,
-          },
-        },
-        funds: [],
-      }
-    }
-    const burnAll = (headstashAddress: string): BurnAllMessage => {
-      return {
-        sender: txSigner,
-        contract: headstashAddress,
-        msg: {
-          burn_all: {},
-        },
-        funds: [],
-      }
-    }
-    const withdraw = (headstashAddress: string, stage: number, address: string): WithdrawMessage => {
+    // const burn = (headstashAddress: string): BurnMessage => {
+    //   return {
+    //     sender: txSigner,
+    //     contract: headstashAddress,
+    //     msg: {
+    //       burn: {
+    //       },
+    //     },
+    //     funds: [],
+    //   }
+    // }
+    // const burnAll = (headstashAddress: string): BurnAllMessage => {
+    //   return {
+    //     sender: txSigner,
+    //     contract: headstashAddress,
+    //     msg: {
+    //       burn_all: {},
+    //     },
+    //     funds: [],
+    //   }
+    // }
+    const withdraw = (headstashAddress: string, address: string): WithdrawMessage => {
       return {
         sender: txSigner,
         contract: headstashAddress,
         msg: {
           withdraw: {
-            stage,
             address,
           },
         },
@@ -726,26 +701,24 @@ export const HeadstashAirdrop = (client: SigningCosmWasmClient, txSigner: string
       }
     }
 
-    const pause = (headstashAddress: string, stage: number): PauseMessage => {
+    const pause = (headstashAddress: string): PauseMessage => {
       return {
         sender: txSigner,
         contract: headstashAddress,
         msg: {
           pause: {
-            stage,
           },
         },
         funds: [],
       }
     }
 
-    const resume = (headstashAddress: string, stage: number, newExpiration?: Expiration): ResumeMessage => {
+    const resume = (headstashAddress: string, newExpiration?: Expiration): ResumeMessage => {
       return {
         sender: txSigner,
         contract: headstashAddress,
         msg: {
           resume: {
-            stage,
             new_expiration: newExpiration,
           },
         },

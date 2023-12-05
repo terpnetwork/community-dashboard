@@ -14,10 +14,11 @@ import { siteConfig } from "@/config/site"
 import { QueryClientProvider } from 'react-query'
 
 // cosmos chain & wallet imports 
-import { assets, chains } from "chain-registry";
+import { assets, chains as cosmosChains } from "chain-registry";
 import { Chain } from "@chain-registry/types";
 import { Decimal } from "@cosmjs/math";
 import { GasPrice } from "@cosmjs/stargate";
+import { publicProvider } from 'wagmi/providers/public'
 import { ChainProvider } from "@cosmos-kit/react";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr";
 import { wallets as leapWallets } from "@cosmos-kit/leap";
@@ -29,7 +30,9 @@ import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/badges/components/layout';
 import { getComponentMetadata } from '@/components/badges/utils/layout';
 import StyledPointer from '@/components/utils/styled-pointer';
-import { WagmiConfig, createConfig } from 'wagmi'
+import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
 // import { makeWeb3AuthWallets } from "@cosmos-kit/web3auth";
 
 export const metadata: Metadata = {
@@ -41,7 +44,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "Terp Network Contributors",
-      url: "https://terp.network",
+      url: "https://dash.terp.network",
     },
   ],
   creator: "Terp Network Contributors",
@@ -51,21 +54,26 @@ export const metadata: Metadata = {
   ],
 }
 
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [mainnet],
+  [publicProvider()],
+)
+const config = createConfig({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+  ],
+  publicClient,
+  webSocketPublicClient,
+})
 
 export default function App({ Component, pageProps }: AppProps) {
 
-// Set up wagmi config
-const config = createConfig({
-  autoConnect: true,
-})
-
-
   return (
-
     <RootLayout>
       <QueryClientProvider client={queryClient}>
         <ChainProvider
-          chains={[...chains]}
+          chains={[...cosmosChains]}
           assetLists={[...assets]}
           wallets={[
             ...leapWallets,
@@ -73,7 +81,6 @@ const config = createConfig({
             ...keplrWallets,
             ...ledgerWallets,
             // ...web3AuthWallets,
-
           ]}
           throwErrors={false}
           subscribeConnectEvents={false}

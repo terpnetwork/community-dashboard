@@ -14,13 +14,12 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   handleEthPubkey,
 }) => {
   const [eth_pubkey, setEthPubkey] = useState<string>("");
-  const { address, connector, isConnected } = useAccount()
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect()
-  const { disconnect } = useDisconnect()
+  const { address, connector, isConnected, status  } = useAccount();
+  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
+  const { disconnect } = useDisconnect();
 
   const connectWallet = async () => {
-    if ((window as any).ethereum) {
+    if (status !== 'connected' ) {
       try {
         const addressArray = await window.ethereum.request({
           method: "eth_requestAccounts",
@@ -41,7 +40,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   };
 
   const getConnectedMetamaskWallet = async () => {
-    if ((window as any).ethereum) {
+    if (status === 'connected') {
       try {
         const addressArray = await (window as any).ethereum.request({
           method: "eth_accounts",
@@ -82,7 +81,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   };
 
   const addWalletListener = () => {
-    if ((window as any).ethereum) {
+    if (status === 'connected') {
       (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
           setEthPubkey(accounts[0]);
