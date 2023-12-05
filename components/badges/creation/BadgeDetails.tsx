@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable no-nested-ternary */
 
 /* eslint-disable @typescript-eslint/no-unsafe-argument */

@@ -1,8 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import {Button} from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 
-import router, { useRouter } from "next/router";
+import router from "next/router";
 
 function toHeadstash() {
     router.push('/w/headstash');
@@ -13,7 +12,7 @@ function toBadges() {
 
 
 export function DemoDatePicker() {
-    const router = useRouter()
+    // const router = useRouter()
   return (
     <>
     <Card>

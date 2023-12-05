@@ -5,7 +5,7 @@ import "@interchain-ui/react/styles";
 // next & react imports 
 import { Metadata } from "next"
 import type { AppProps } from 'next/app'
-import React, { useMemo } from "react";
+import React from "react";
 
 // application component imports 
 import { SiteHeader } from "@/components/navbars/site-header"
@@ -15,9 +15,6 @@ import { QueryClientProvider } from 'react-query'
 
 // cosmos chain & wallet imports 
 import { assets, chains as cosmosChains } from "chain-registry";
-import { Chain } from "@chain-registry/types";
-import { Decimal } from "@cosmjs/math";
-import { GasPrice } from "@cosmjs/stargate";
 import { publicProvider } from 'wagmi/providers/public'
 import { ChainProvider } from "@cosmos-kit/react";
 import { wallets as keplrWallets } from "@cosmos-kit/keplr";
@@ -29,7 +26,6 @@ import { ContractsProvider } from '@/components/badges/contexts/contracts';
 import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/badges/components/layout';
 import { getComponentMetadata } from '@/components/badges/utils/layout';
-import StyledPointer from '@/components/utils/styled-pointer';
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 

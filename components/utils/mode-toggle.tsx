@@ -1,6 +1,5 @@
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+
 import { useModalTheme } from "@cosmos-kit/react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +11,7 @@ import * as React from "react";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
-  const { modalTheme, setModalTheme } = useModalTheme();
+  const {  setModalTheme } = useModalTheme();
 
   return (
     <>

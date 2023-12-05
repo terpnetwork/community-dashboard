@@ -1,8 +1,8 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { getAssetType } from '../utils/getAssetType'
+import Image from 'next/image'
 
 
 export interface MetadataFormGroupProps {
@@ -65,7 +65,7 @@ export const MetadataFormGroup = (props: MetadataFormGroupProps) => {
                 {getAssetType(relatedAsset.name) === 'audio' && audioPreview}
                 {getAssetType(relatedAsset.name) === 'video' && videoPreview}
                 {getAssetType(relatedAsset.name) === 'image' && (
-                  <img alt="preview" src={URL.createObjectURL(relatedAsset)} />
+                  <Image alt="preview" src={URL.createObjectURL(relatedAsset)} />
                 )}
                 {getAssetType(relatedAsset.name) === 'html' && (
                   <iframe allowFullScreen height="420px" srcDoc={htmlContents} title="Preview" width="100%" />

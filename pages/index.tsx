@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 
 import {
@@ -8,88 +7,28 @@ import {
 } from "@/components/utils/page-header"
 import {DemoDatePicker} from "@/components/utils/to-headstash" 
 import { Separator } from "@/components/ui/separator"
-import { ArrowRightIcon, PaperPlaneIcon, ResetIcon } from "@radix-ui/react-icons"
+import { ArrowRightIcon } from "@radix-ui/react-icons"
 import { cn } from "@/lib/utils"
-
 import { siteConfig } from "@/config/site"
 import { Icons } from "@/components/ui/icons"
-import { useChain, useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react";
 import { useIsClient } from "@/hooks";
 import { useEffect } from "react";
-import { Badge } from "@/components/ui/badge"
-
-import { ChainWalletCard } from "@/components/wallet/chain-wallet-card"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@interchain-ui/react"
 import { buttonVariants } from "@/components/ui/button"
-import StyledPointer from "@/components/utils/styled-pointer"
-
 const chainNames_1 = ["terpnetwork"];
-const chainNames_2: string[] = [];
 
 export default function Home() {
-  const { username, connect, disconnect, wallet, openView } = useChain(
-    chainNames_1[0]
-  );
-  const { status: globalStatus, mainWallet } = useWallet(); // status here is the global wallet status for all activated chains (chain is activated when call useChain)
+  const {chainWallet} = useChain(chainNames_1[0]);
   const isClient = useIsClient();
 
   useEffect(() => {
     const fn = async () => {
-      await mainWallet?.connect();
+      await chainWallet?.connect();
     };
     fn();
-  }, []);
+  }, [chainWallet]);
 
   if (!isClient) return null;
-
-  const getGlobalbutton = () => {
-    if (globalStatus === "Connecting") {
-      return (
-        <Button  onClick={() => connect()}>
-          <PaperPlaneIcon className="mr-2 h-4 w-4" />
-          {`Connecting ${wallet?.prettyName}`}
-        </Button>
-      );
-    }
-    if (globalStatus === "Connected") {
-      return (
-        <>
-          <Button  size="sm" onClick={() => openView()}>
-            <div className="flex justify-center items-center space-x-2">
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-500 leading-4 mb-2" />
-              <span>Connected to: {wallet?.prettyName}</span>
-            </div>
-          </Button>
-
-          <Badge className="flex">
-            Account name: {username}
-          </Badge>
-
-          <Button
-           
-            onClick={async () => {
-              await disconnect();
-              // setGlobalStatus(WalletStatus.Disconnected);
-            }}
-          >
-            <ResetIcon className="mr-2 h-4 w-4" />
-            Disconnect
-          </Button>
-        </>
-      );
-    }
-
-    return (
-    <div className="flex w-full items-center space-x-4 pb-8 pt-4 md:">
-     
-      <Button
-     onClick={() => connect()}
-   
-     >Connect Wallet</Button>
-     </div>
-     );
-  };
 
 
   return (
@@ -175,7 +114,7 @@ export default function Home() {
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Terp Network API's.
+            Find in-depth information about Terp Network API&apos;s.
           </p>
         </a>
 

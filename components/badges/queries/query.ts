@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import type { BadgeHubInstance } from 'contracts/badgeHub'
 

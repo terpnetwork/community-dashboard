@@ -1,5 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-
 import * as crypto from 'crypto'
 import { Word32Array } from 'jscrypto'
 import { SHA256 } from 'jscrypto/SHA256'

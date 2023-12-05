@@ -74,7 +74,7 @@ const BadgeManagePage: NextPage = () => {
     if (initialBadgeHub && initialBadgeHub.length > 0) badgeHubContractState.onChange(initialBadgeHub)
     if (initialBadgeId && initialBadgeId.length > 0)
         badgeIdState.onChange(isNaN(parseInt(initialBadgeId)) ? 0 : parseInt(initialBadgeId))
-    }, [])
+    }, [badgeHubContractState,badgeIdState])
     
     useEffect(() => {
         async function getMintRule() {
@@ -186,7 +186,7 @@ const BadgeManagePage: NextPage = () => {
                 </div>
                 <div>
                   {(action && (
-                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition 
                     <BadgeActions
                       badgeHubContractAddress={badgeHubContractState.value}
                       badgeHubMessages={badgeHubMessages}

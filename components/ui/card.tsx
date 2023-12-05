@@ -2,7 +2,6 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import clsx from "clsx"
-import { ArrowTopRightIcon } from "@radix-ui/react-icons"
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -85,7 +84,7 @@ export interface StudioCardProps extends React.ComponentProps<'div'> {
 }
 
 export const StudioCard = (props: StudioCardProps) => {
-  const { title, link, linkText, children, className, ...rest } = props
+  const { title, link, children, className, ...rest } = props
   return (
     <div className={clsx('flex relative flex-col space-y-4', className)} {...rest}>
       <h2 className="font-heading text-xl font-bold">{title}</h2>

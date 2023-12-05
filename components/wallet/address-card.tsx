@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import React, { ReactNode, useEffect, useState } from "react";
 
 import { CopyAddressType } from "@/types";
+import Image from "next/image";
 
 export function stringTruncateFromdiv(str: string, maxLength: number) {
   const midChar = "…"; // character to insert into the center of the result
@@ -47,7 +48,7 @@ export const ConnectedShowAddress = ({
         )
       );
     }
-  }, [address]);
+  }, [address, maxDisplayLength, size, defaultMaxLength]);  
 
   if (!address) return null;
 
@@ -55,7 +56,7 @@ export const ConnectedShowAddress = ({
     <Badge variant="outline">
       {address && walletIcon && (
         <div>
-          <img alt={displayAddress} src={walletIcon} width={50} />
+          <Image alt={displayAddress} src={walletIcon} width={50} />
         </div>
       )}
       <p className="leading-7 [&:not(:first-child)]:mt-6">{displayAddress}</p>

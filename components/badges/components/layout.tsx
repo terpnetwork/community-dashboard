@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Head from 'next/head'
-import { useEffect, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { FaDesktop } from 'react-icons/fa'
 // import { Issuebar } from './Issuebar'
 import { Sidebar } from './Sidebar'

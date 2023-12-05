@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 
 import clsx from 'clsx'

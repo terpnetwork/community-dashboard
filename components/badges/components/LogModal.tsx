@@ -14,7 +14,7 @@ export interface LogModalProps {
 }
 export const LogModal = (props: LogModalProps) => {
   const logs = useLogStore()
-  const [isChecked, setIsChecked] = useState(false)
+  // const [isChecked, setIsChecked] = useState(false)
 
   const checkBoxRef = useRef<HTMLInputElement>(null)
 

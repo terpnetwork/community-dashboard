@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 export type AssetType = 'image' | 'audio' | 'video' | 'html' | 'unknown'
 

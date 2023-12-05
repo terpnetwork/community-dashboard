@@ -86,7 +86,7 @@ export const BadgeQueries = ({ badgeHubContractAddress, badgeId, badgeHubMessage
     },
     {
       placeholderData: null,
-      onError: (error: any) => {
+      onError: (error: Error) => {
         toast.error(error.message, { style: { maxWidth: 'none' } })
       },
       enabled: Boolean(badgeHubContractAddress && type && badgeId),

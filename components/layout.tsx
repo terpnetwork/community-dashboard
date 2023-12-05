@@ -1,6 +1,4 @@
 import { ThemeProvider } from "@/components/utils/theme-provider";
-import { ModeToggle } from "@/components/utils/mode-toggle";
-import StyledPointer from "./utils/styled-pointer";
 
 interface RootLayoutProps {
   children?: React.ReactNode;

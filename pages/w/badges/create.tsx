@@ -1,42 +1,40 @@
-import { withMetadata } from "@/components/badges/utils/layout";
-import { NextPage } from "next";
-import { Sidetab } from '@typeform/embed-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Conditional } from "@/components/badges/utils/conditional";
-import { BadgeLoadingModal } from "@/components/badges/utils/badgeLoadingModal";
-import { ImageUploadDetails, ImageUploadDetailsDataProps, MintRule } from "@/components/badges/creation/imageUploadDetails";
-import type { Badge } from '@/contracts/badgeHub';
-import { useInputState } from "@/components/badges/forms/formInput.hooks";
-import { useWallet } from "@/utils/wallet";
-import { BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL, NETWORK } from "@/components/badges/utils/constants";
-import { toast } from 'react-hot-toast'
-import { addLogItem } from "@/components/badges/contexts/log";
-import { upload } from "@/components/badges/services/upload";
-import { resolveAddress } from "@/components/badges/utils/resolveAddress";
-import { generateKeyPairs } from "@/components/badges/utils/hash";
-import type { DispatchExecuteArgs as BadgeHubDispatchExecuteArgs } from 'contracts/badgeHub/messages/execute'
-import { dispatchExecute as badgeHubDispatchExecute } from 'contracts/badgeHub/messages/execute'
-import { getAssetType } from "@/components/badges/utils/getAssetType";
-import { uid } from "@/components/badges/utils/random";
-import * as secp256k1 from 'secp256k1'
 import * as crypto from 'crypto'
+import * as secp256k1 from 'secp256k1'
+import { NextPage } from "next";
 import { NextSeo } from "next-seo";
-import { Link } from "@interchain-ui/react";
-import { links } from "@/components/badges/utils/links";
-import { Alert } from "@/components/ui/alert";
+import { toast } from 'react-hot-toast'
+import clsx from "clsx";
+import sizeof from "object-sizeof";
 import { QRCodeSVG } from "qrcode.react";
 import { toPng } from 'html-to-image'
+import { Link } from "@interchain-ui/react";
+import { uid } from "@/components/badges/utils/random";
 import { copy } from "@/components/badges/utils/clipboard";
-import { truncateMiddle } from "@/components/badges/utils/text";
-import clsx from "clsx";
-import { TextInput } from "@/components/badges/forms/formInput";
-import { BadgeDetails, BadgeDetailsDataProps } from "@/components/badges/creation/BadgeDetails";
-import sizeof from "object-sizeof";
-import { BadgeConfirmationModal } from "@/components/badges/creation/BadgeConfirmationModal";
+import { links } from "@/components/badges/utils/links";
+import { Alert } from "@/components/ui/alert";
+import { upload } from "@/components/badges/services/upload";
 import { Button } from "@/components/badges/components/Button";
-import { useContracts } from "@/components/badges/contexts/contracts";
 import { Tooltip } from "@/components/badges/components/Tooltip";
+import { TextInput } from "@/components/badges/forms/formInput";
+import { addLogItem } from "@/components/badges/contexts/log";
+import { Conditional } from "@/components/badges/utils/conditional";
+import { getAssetType } from "@/components/badges/utils/getAssetType";
+import { useContracts } from "@/components/badges/contexts/contracts";
+import { withMetadata } from "@/components/badges/utils/layout";
+import { useInputState } from "@/components/badges/forms/formInput.hooks";
+import { truncateMiddle } from "@/components/badges/utils/text";
+import { resolveAddress } from "@/components/badges/utils/resolveAddress";
+import { generateKeyPairs } from "@/components/badges/utils/hash";
+import { BadgeLoadingModal } from "@/components/badges/utils/badgeLoadingModal";
+import { BadgeConfirmationModal } from "@/components/badges/creation/BadgeConfirmationModal";
+import { BadgeDetails, BadgeDetailsDataProps } from "@/components/badges/creation/BadgeDetails";
+import { BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL, NETWORK } from "@/components/badges/utils/constants";
+import { ImageUploadDetails, ImageUploadDetailsDataProps, MintRule } from "@/components/badges/creation/imageUploadDetails";
+import { dispatchExecute as badgeHubDispatchExecute } from '@/contracts/badgeHub/messages/execute'
+import type { DispatchExecuteArgs as BadgeHubDispatchExecuteArgs } from '@/contracts/badgeHub/messages/execute'
+import type { Badge } from '@/contracts/badgeHub';
+import { useWallet } from "@/utils/wallet";
 
 
 
@@ -233,6 +231,7 @@ const BadgeCreationPage: NextPage = () => {
                         setCreatingBadge(false)
                         setTransactionHash(data.split(':')[0])
                         setBadgeId(data.split(':')[1])
+                        /* eslint-disable @typescript-eslint/no-unused-vars */
                         const res = await toast.promise(
                             badgeHubContract.use(BADGE_HUB_ADDRESS)?.addKeys(
                                 wallet.address || '',

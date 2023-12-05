@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable no-misleading-character-class */
 /* eslint-disable no-control-regex */
 import { toUtf8 } from '@cosmjs/encoding'

@@ -10,7 +10,7 @@ export interface SettingsModalProps {
 }
 export const SettingsModal = (props: SettingsModalProps) => {
   const globalSettings = useGlobalSettings()
-  const [isChecked, setIsChecked] = useState(false)
+  // const [isChecked, setIsChecked] = useState(false)
 
   const checkBoxRef = useRef<HTMLInputElement>(null)
 

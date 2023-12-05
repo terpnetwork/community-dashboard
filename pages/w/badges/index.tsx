@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, StudioCard } from "@/components/ui/card"
 import { withMetadata } from "@/components/badges/utils/layout"
 import { NextPage } from "next"
 import { useRouter } from "next/router";
@@ -10,16 +9,16 @@ const BadgesStudio: NextPage = () => {
 
     function toCreate() {
         router.push('/w/badges/create');
-        };
+        }
     function toManage() {
         router.push('/w/badges/manage');
-        };
+        }
     function toClaim() {
         router.push('/w/badges/claim');
-        };
+        }
     function toMyCollection() {
         router.push('/w/badges/mine');
-        };
+        }
         
     return (
         <section className="px-8 pt-4 pb-16 mx-auto space-y-8 max-w-4xl">

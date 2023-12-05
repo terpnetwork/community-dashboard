@@ -3,11 +3,11 @@ import { useSignMessage } from 'wagmi'
 import { recoverMessageAddress } from 'viem'
 
 export function SignMessage() {
-  const recoveredAddress = React.useRef<string>()
+  // const recoveredAddress = React.useRef<string>()
   const { data: signMessageData, error, isLoading, signMessage, variables } = useSignMessage()
 
   React.useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (variables?.message && signMessageData) {
         const recoveredAddress = await recoverMessageAddress({
           message: variables?.message,
@@ -22,7 +22,6 @@ export function SignMessage() {
     <form
     onSubmit={(event) => {
       event.preventDefault();
-      const formData = new FormData(event.target);
       const message = eth_pubkey as string || ''; 
       signMessage({ message });
     }}

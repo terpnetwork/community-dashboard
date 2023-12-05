@@ -1,5 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // import { AirdropUpload } from 'components/AirdropUpload'
 import { toUtf8 } from '@cosmjs/encoding'
@@ -10,7 +8,6 @@ import sizeof from 'object-sizeof'
 import type { FormEvent } from 'react'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { FaArrowRight } from 'react-icons/fa'
 import { useMutation } from 'react-query'
 import * as secp256k1 from 'secp256k1'
 import { useWallet } from 'utils/wallet'
@@ -31,7 +28,6 @@ import { Button } from '@interchain-ui/react'
 import { AddressList } from '../forms/AddressList'
 import { TransactionHash } from '../components/TransactionHash'
 import { BadgeAirdropListUpload } from './airdropListUpload'
-
 import { useAddressListState } from '../forms/AddressList.hooks'
 import { isEitherType } from './actions'
 import { resolveAddress } from '../utils/resolveAddress'
@@ -51,10 +47,10 @@ export const BadgeActions = ({ badgeHubContractAddress, badgeId, badgeHubMessage
   const wallet = useWallet()
   const [lastTx, setLastTx] = useState('')
 
-  const [timestamp, setTimestamp] = useState<Date | undefined>(undefined)
+  const [timestamp] = useState<Date | undefined>(undefined)
   const [airdropAllocationArray, setAirdropAllocationArray] = useState<string[]>([])
   const [badge, setBadge] = useState<Badge>()
-  const [transferrable, setTransferrable] = useState<TransferrableType>(undefined)
+  const [transferrable] = useState<TransferrableType>(undefined)
   const [resolvedOwnerAddress, setResolvedOwnerAddress] = useState<string>('')
   const [editFee, setEditFee] = useState<number | undefined>(undefined)
   const [triggerDispatch, setTriggerDispatch] = useState<boolean>(false)

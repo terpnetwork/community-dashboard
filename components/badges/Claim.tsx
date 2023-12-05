@@ -1,25 +1,14 @@
 import { useEffect, useState } from "react";
 import { PageHeaderDescription, PageHeaderHeading } from "../utils/page-header";
 import { Input } from "@/components/ui/input"
-import { FormHelperText, useDisclosure, FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
+import { FormHelperText, useDisclosure, FormControl, FormErrorMessage } from "@chakra-ui/react";
 import { Button } from "../ui/button";
-import { useChain, useWallet } from "@cosmos-kit/react";
+import { useChain } from "@cosmos-kit/react";
 import { BadgeResponse } from "@steak-enjoyers/badges.js/types/codegen/Hub.types";
 import { useStore } from "./utils/store";
 import { getTimestampInSeconds, formatTimestamp, bytesToHex, hexToBytes, sha256, } from '@/components/badges/utils/helpers'
 import * as secp256k1 from "secp256k1";
-import { bech32 } from "bech32";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "../ui/label";
+import  bech32 from "bech32";
 
 import TxModal from './components/TxModal'
 import { Link } from "@interchain-ui/react";
@@ -34,12 +23,12 @@ const fillerImageUrl = "https://bafybeiegatnkczuvu5dgujdkyx4oj3xi3mqe5vtnoh7ry3r
 
 export default function Claim() {
     const store = useStore();
-    const { username, connect, disconnect, getOfflineSignerDirect, address, wallet, openView, status } = useChain(
+    const {  connect, disconnect, address, status } = useChain(
         'terpnettestnet'
     );
     // which page to display
     const [page, setPage] = useState(Page.Claim);
-    const [txModalIsOpen, setTxModalIsOpen] = useState(false);
+    // const [txModalIsOpen, setTxModalIsOpen] = useState(false);
 
     // inputs - badge id
     const [idStr, setIdStr] = useState("");
@@ -57,7 +46,7 @@ export default function Claim() {
     const [ownerInvalidReason, setOwnerInvalidReason] = useState("");
 
     // whether tx modal is open on the submit page
-    const { isOpen: isTxModalOpen, onOpen: onTxModalOpen, onClose: onTxModalClose } = useDisclosure();
+    const { isOpen: isTxModalOpen, onClose: onTxModalClose } = useDisclosure();
 
     // values on the preview page
     const [badge, setBadge] = useState<BadgeResponse>();
@@ -197,7 +186,7 @@ export default function Claim() {
         // claiming the badge.
         // Firstly, if we don't already have a valid badge id, it's impossible to determine to badge's
         // eligibility. Simply return null in this case.
-        if (!!!idValid) {
+        if (idValid) {
             return setPrivkeyValidNull();
         }
 
@@ -286,7 +275,7 @@ export default function Claim() {
         // claiming the badge.
         // Firstly, if we don't already have a valid badge id, it's impossible to determine to badge's
         // eligibility. Simply return null in this case.
-        if (!!!idValid) {
+        if (idValid) {
             return setOwnerValidNull();
         }
 
@@ -483,7 +472,7 @@ export default function Claim() {
                                 )
                             ) : (
                                 <FormHelperText>
-                                    Let's check if your account can claim an existing badge!
+                                    Let&apos;s check if your account can claim an existing badge!
                                 </FormHelperText>
                             )}
                         </FormControl>

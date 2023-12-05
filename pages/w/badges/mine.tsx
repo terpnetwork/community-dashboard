@@ -1,10 +1,9 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { ContractPageHeader } from '@/components/badges/components/contractPageHeader'
 import { Conditional } from '@/components/badges/utils/conditional'
-import { API_URL, BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL, STARGAZE_URL } from '@/components/badges/utils/constants'
+import { API_URL, BADGE_HUB_ADDRESS, BLOCK_EXPLORER_URL } from '@/components/badges/utils/constants'
 import { withMetadata } from '@/components/badges/utils/layout'
 import { links } from '@/components/badges/utils/links'
 import { Alert } from '@/components/ui/alert'
@@ -14,6 +13,7 @@ import axios from 'axios'
 
 import type { NextPage } from 'next'
 import { NextSeo } from 'next-seo'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { FaSlidersH, FaUser } from 'react-icons/fa'
@@ -59,7 +59,7 @@ const BadgeList: NextPage = () => {
                       <div className="flex items-center space-x-3">
                         <div className="avatar">
                           <div className="w-28 h-28 mask mask-squircle">
-                            <img
+                            <Image
                               alt="badge-preview"
                               src={
                                 (badge?.image as string).startsWith('ipfs')

@@ -73,7 +73,7 @@ export const TextInput = forwardRef<HTMLInputElement, FormInputProps>(
 )
 
 export const CheckBoxInput = forwardRef<HTMLInputElement, FormInputProps>(
-  function CheckBoxInput(props, ref) {
+  function CheckBoxInput() {
     return (
       <div className="flex flex-col space-y-2">
         <label className="flex flex-col space-y-1" htmlFor="explicit">

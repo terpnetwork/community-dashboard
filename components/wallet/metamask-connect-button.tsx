@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   useAccount,
-  useConnect,
   useDisconnect,
 } from 'wagmi'
 import {getShortAddress} from '@/components/badges/utils/getShortAddress' 
+import toast from "react-hot-toast";
 
 interface MetamaskConnectButtonProps {
   handleEthPubkey: (eth_pubkey: string) => void;
@@ -14,24 +14,20 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   handleEthPubkey,
 }) => {
   const [eth_pubkey, setEthPubkey] = useState<string>("");
-  const { address, connector, isConnected, status  } = useAccount();
-  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
+  const {  status  } = useAccount();
+  // const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
   const { disconnect } = useDisconnect();
 
   const connectWallet = async () => {
     if (status !== 'connected' ) {
-      try {
         const addressArray = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
         const userAddress = addressArray[0];
         const obj = {
-          address: addressArray[0],
+          address: userAddress,
         };
         return obj;
-      } catch (err) {
-        throw err;
-      }
     } else {
       throw new Error(
         "You must install Metamask, a virtual Ethereum wallet, in your browser."
@@ -41,8 +37,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
 
   const getConnectedMetamaskWallet = async () => {
     if (status === 'connected') {
-      try {
-        const addressArray = await (window as any).ethereum.request({
+        const addressArray = await (window).ethereum.request({
           method: "eth_accounts",
         });
         if (addressArray.length > 0) {
@@ -54,9 +49,6 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
             "Connect to Metamask using the connect wallet button."
           );
         }
-      } catch (err) {
-        throw err;
-      }
     } else {
       throw new Error(
         "You must install Metamask, a virtual Ethereum wallet, in your browser."
@@ -69,6 +61,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       const walletResponse = await connectWallet();
       setEthPubkey(walletResponse.address);
     } catch (e) {
+      toast.error(`${e}`)
     }
   };
 
@@ -77,12 +70,13 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       await disconnect();
       setEthPubkey("");
     } catch (e) {
+      toast.error(`${e}`)
     }
   };
 
   const addWalletListener = () => {
     if (status === 'connected') {
-      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
+      (window).ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
           setEthPubkey(accounts[0]);
         } else {
@@ -102,6 +96,7 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       setEthPubkey(address.address);
       addWalletListener();
     } catch (e) {
+      toast.error(`${e}`)
     }
   };
 

@@ -1,11 +1,9 @@
-import { Box, Button, Flex, Link, Spinner, Text } from "@chakra-ui/react";
+import { Button, Flex, Link, Spinner, Text } from "@chakra-ui/react";
 import { FC, useState, useEffect } from "react";
-
-import ModalWrapper from "./ModalWrapper";
 import SuccessIcon from "./TxSuccessIcon";
 import FailedIcon from "./TxFailedIcon";
 import ExternalLinkIcon from "./ExternalLinkIcon";
-import truncateString from "@/components/badges/utils/helpers"
+// import truncateString from "@/components/badges/utils/helpers"
 import { useStore } from '@/components/badges/utils/store'
 import {
   Dialog,
@@ -17,9 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input"
-import { copy } from "../utils/clipboard"
+// import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input"
+// import { copy } from "../utils/clipboard"
 import React from "react";
 
 
@@ -71,7 +69,7 @@ type Props = {
   isDisabled: boolean;
 };
 
-const TxModal: FC<Props> = ({ getMsg, isDisabled, isOpen, onClose }) => {
+const TxModal: FC<Props> = ({ getMsg, isOpen, onClose }) => {
   const store = useStore();
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false);
   const [txStatusHeader, setTxStatusHeader] = useState<string>();
@@ -133,7 +131,7 @@ const TxModal: FC<Props> = ({ getMsg, isDisabled, isOpen, onClose }) => {
           </Box>
         </Box>
       </ModalWrapper> */}
-      <Dialog onOpenChange={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogTrigger asChild>
           <Button className="justify-center flex-1 gap-2 inline-flex items-center px-4 py-2 rounded-lg disabled:cursor-not-allowed   hover:bg-primary-700 claim-button">
             Claim

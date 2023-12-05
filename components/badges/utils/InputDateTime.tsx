@@ -1,7 +1,5 @@
-import clsx from 'clsx'
-import DateTimePicker, { DateTimePickerProps } from 'react-datetime-picker';
 
-import { FaCalendar, FaTimes } from 'react-icons/fa'
+
 import * as React from "react"
 import { format } from "date-fns"
 
@@ -18,7 +16,7 @@ import { CalendarIcon } from '@radix-ui/react-icons';
 
 
 
-export const InputDateTime = ({ className, ...rest }: DateTimePickerProps) => {
+export const InputDateTime = () => {
   const [date, setDate] = React.useState<Date>()
 
   return (

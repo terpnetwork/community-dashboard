@@ -34,7 +34,7 @@ export function bytesToHex(bytes: Uint8Array) {
 export function convertFromIPFSUrl(url: string | null | undefined) {
   // if image exists and starts with `ipfs://`, we use Stargaze's IPFS gateway
   // otherwise, we return a placeholder with the appropriate text
-  if (!!url) {
+  if (url) {
     if (url.startsWith("ipfs://")) {
       return url.replace("ipfs://", "https://ipfs-gw.stargaze-apis.com/ipfs/");
     } else {

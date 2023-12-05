@@ -12,12 +12,7 @@ import { toUtf8 } from "@cosmjs/encoding";
 import { assertIsDeliverTxSuccess } from "@cosmjs/stargate"
 import { SigningCosmWasmClient, MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { getShortSig } from "@/utils/getShortSig";
-import { useSignMessage } from "wagmi";
-import { recoverMessageAddress } from "viem";
 import { Button } from "@/components/ui/button";
-// import { useRouter } from "next/router";
-// import { SignMessage } from "@/components/wallet/metamask/signMsg";
-// import { useContracts } from "@/contracts/context";
 
 // const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
 const chainNames_1 = ["terpnettestnet"];
@@ -31,18 +26,18 @@ export default function Headstash() {
   const { connect, disconnect, getOfflineSignerDirect, address, wallet, status, } = useChain(chainNames_1[0]); // cosmos-kit
   const isClient = useIsClient();
   const [amount, setAmount] = useState('');
-  const [claimMsg, setClaimMsg] = useState('');
+  const [claimMsg] = useState('');
   const [eth_pubkey, setEthPubkey] = useState('');
-  const [eth_sig, setEthSig] = useState('');
-  const [executionResult, setExecutionResult] = useState('');
+  const [eth_sig] = useState('');
+  // const [executionResult, setExecutionResult] = useState('');
   const formattedTerpAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $TERP`;
   const formattedThiolAmount = `${amount.slice(0, 5)}.${amount.slice(5)} $THIOL`;
-  const [headstashState, setHeadstashState] = useState<ClaimState>('loading');
+  const [headstashState] = useState<ClaimState>('loading');
   const [feegrantState, setFeegrantState] = useState<ClaimState>('not_claimed');
   const [loading, setLoading] = useState(false);
   const [proofs, setProofs] = useState<string[]>(['']);
-  const [signature, setSignature] = useState('');
-  const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined);
+  const [signature] = useState('');
+  const [setSignedMessage] = useState<SignedMessage | undefined>(undefined);
   const contractAddress = "terp1s7xusjh42jlakhgs2a6wgxlvf9ynxuz87z6tpg2wwam7z650hnysp8v93n";
   const [isVerified, setIsVerified] = useState(false);
 
@@ -362,7 +357,7 @@ export default function Headstash() {
         >Connect</button>
       </div>
     );
-  };;
+  };
 
   return (
     <main className="claim-head">
@@ -372,7 +367,7 @@ export default function Headstash() {
           <div className="inner-card">
             <div className="step-one-card">
               <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading>
-              <PageHeaderDescription>First let's check if your account was included in the headstash airdrop. Press the button to connect with a Metamask Wallet. </PageHeaderDescription>
+              <PageHeaderDescription>First let`&apos;s check if your account was included in the headstash airdrop. Press the button to connect with a Metamask Wallet. </PageHeaderDescription>
               <br />
               <br />  
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
@@ -449,7 +444,7 @@ export default function Headstash() {
                   <div className="step-one-card">
                     <PageHeaderHeading>4. Setup Terp Account & <br /> Claim Your Headstash</PageHeaderHeading>
                     <PageHeaderDescription>
-                      Transactions on Terp Network require fee's, <br /> We've got you covered for this one! 👍
+                      Transactions on Terp Network require fee`$apos;`s, <br /> We`$apos;ve got you covered for this one! 👍
                     </PageHeaderDescription>
                     <br />
                     <br />
