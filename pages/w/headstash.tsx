@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast'
 import { useChain } from "@cosmos-kit/react";
-import MetamaskConnectButton from "../../components/wallet/metamask-connect-button";
+import MetamaskConnectButton from "@/components/wallet/metamask-connect-button";
 import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/page-header";
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import { useIsClient } from "@/hooks";
@@ -43,8 +43,6 @@ export default function Headstash() {
   const [proofs, setProofs] = useState<string[]>(['']);
   const [signature, setSignature] = useState('');
   const [signedMessage, setSignedMessage] = useState<SignedMessage | undefined>(undefined);
-  const { data: signMessageData, error, isLoading, signMessage, variables } = useSignMessage();
-  const [recoveredAddress, setRecoveredAddress] = useState('');
   const contractAddress = "terp1s7xusjh42jlakhgs2a6wgxlvf9ynxuz87z6tpg2wwam7z650hnysp8v93n";
   const [isVerified, setIsVerified] = useState(false);
 
@@ -55,25 +53,26 @@ export default function Headstash() {
     setEthPubkey(eth_pubkey);
   };
 
-  // useEffect(() => {
-  //   const handleWalletDisconnect = () => {
-  //     // eth_pubkey null on wallet disconnect
-  //     setEthPubkey('');
-  //   };
+  useEffect(() => {
+    const handleWalletDisconnect = () => {
+      // eth_pubkey null on wallet disconnect
+      setEthPubkey('');
+    };
 
-  //   // Check if window.ethereum is available
-  //   if (window.ethereum) {
-  //     // Listen for wallet disconnect events
-  //     window.ethereum.on('disconnect', handleWalletDisconnect);
-  //   }
+    // Check if window.ethereum is available
+    if (window.ethereum) {
+      // Listen for wallet disconnect events
+      window.ethereum.on('disconnect', handleWalletDisconnect);
+    }
 
-  //   // Cleanup the event listener when the component unmounts
-  //   return () => {
-  //     if (window.ethereum) {
-  //       window.ethereum.off('disconnect', handleWalletDisconnect);
-  //     }
-  //   };
-  // }, []);
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.off('disconnect', handleWalletDisconnect);
+        resetProofs();
+      }
+    };
+  }, []);
 
   // useEffect(() => {
   //   ;(async () => {
@@ -308,11 +307,9 @@ export default function Headstash() {
       console.log("Client:", client);
       const result = await client.signAndBroadcast(address ?? "", [msgExecute], fee);
       assertIsDeliverTxSuccess(result);
-      setExecutionResult(`Transaction sent successfully: ${result.transactionHash}`);
-      console.log("Execution Result:", result);
-      toast.success(`Claimed Successfuly: ${result}`);
+      console.log("Execution Result:", result.transactionHash);
+      toast.success(`[View Tx Hash](https://ping.pub/terp/tx/${result.transactionHash})`);
     } catch (error) {
-      setExecutionResult(`Error: ${error}`);
       toast.error(`Claim Headstash: ${error}`);
       console.error("Execution Error:", error);
     }
