@@ -1,21 +1,36 @@
-FROM node:16-alpine as builder
-# Set the working directory to /app inside the container
+FROM node:18-alpine AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-# Copy app files
-COPY . .
-# Install dependencies (npm ci makes sure the exact versions in the lockfile gets installed)
-RUN rm -rf node_modules && yarn install --frozen-lockfile
-# Build the app
-RUN yarn run build
 
-# Bundle static assets with nginx
-FROM nginx:1.21.0-alpine as production
+COPY package.json package-lock.json ./
+RUN  npm install --production
+
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npm run build
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+
 ENV NODE_ENV production
-# Copy built assets from `builder` image
-COPY --from=builder /app/build /usr/share/nginx/html
-# Add your nginx.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Expose port
-EXPOSE 80
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+CMD ["npm", "start"]
