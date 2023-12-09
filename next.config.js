@@ -9,6 +9,7 @@ module.exports = withTM(
   withBundleAnalyzer({
     reactStrictMode: true,
     swcMinify: false,
+    output: 'standalone',
     webpack: (config) => {
       config.module.rules.push({
         test: /\.(ts|tsx)$/,
