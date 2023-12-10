@@ -1,15 +1,14 @@
-import { NETWORK } from '@/components/badges/utils/constants'
+import { NETWORK } from '@/lib/utils'
 import { useChain as useCosmosKitChain } from '@cosmos-kit/react'
 import { chains } from 'chain-registry'
 import { getConfig } from 'config'
-
 
 
 /**
  * Hook to retrieve the wallet for the current chain.
  */
 export const useWallet = () => {
-  const { chainId } = getConfig(NETWORK)
+  const { chainId } = getConfig(NETWORK!)
   const chain = chains.find((c) => c.chain_id === chainId)
   if (!chain) {
     throw new Error('Chain not found')

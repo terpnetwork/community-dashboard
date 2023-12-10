@@ -8,16 +8,18 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { useWallet } from 'utils/wallet'
+
 import { SidebarLayout } from './SidebarLayout'
 import { WalletLoader } from './WalletLoader'
 import { Timezone, setTimezone } from '../contexts/globalSettings'
 import { setLogItemList, useLogStore } from '../contexts/log'
 import { footerLinks, socialsLinks } from '../utils/links'
+import { useChain } from '@cosmos-kit/react'
+const chainNames_1 = ["terpnetwork"];
 
 export const Sidebar = () => {
   const router = useRouter()
-  const wallet = useWallet()
+  const wallet = useChain(chainNames_1[0])
   const logs = useLogStore()
 
   useEffect(() => {

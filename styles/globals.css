@@ -199,6 +199,15 @@ margin-top: 4px;
   border-radius: 4px;
   cursor: pointer;
 }
+.fourthButton {
+  width: 260px;
+  padding: 12px;
+  background-color: #6C8DFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 .terpAmount {
   color: #c2b280;
   text-shadow: #1a1a1a;

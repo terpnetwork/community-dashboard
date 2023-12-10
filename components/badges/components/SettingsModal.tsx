@@ -1,4 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { useRef } from 'react'
 import { Timezone, setTimezone, useGlobalSettings } from '../contexts/globalSettings'
 import { Button } from './Button'
