@@ -1,6 +1,6 @@
 {
   "name": "community-dashboard",
-  "version": "0.1.testnet",
+  "version": "0.1.headstash",
   "private": true,
   "scripts": {
     "dev": "next dev",

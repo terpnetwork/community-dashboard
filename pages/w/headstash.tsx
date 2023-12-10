@@ -7,21 +7,19 @@ import { PageHeaderDescription, PageHeaderHeading } from "@/components/utils/pag
 import MetamaskConnectButton from "@/components/wallet/metamask-connect-button";
 import { Button } from "@/components/ui/button";
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
-// import { SignedMessage } from "@/contracts/headstash";
 import { headstashData } from '../../lib/headstash/headstashData';
 import { proofData } from '../../lib/headstash/proofData';
-
 import { toUtf8 } from "@cosmjs/encoding";
 import { assertIsDeliverTxSuccess } from "@cosmjs/stargate";
 import { SigningCosmWasmClient, MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
 import { getShortSig } from "@/utils/getShortSig";
 import { useAccount } from "wagmi";
-import {  HEADSTASH_ENDPOINT_URL, NETWORK} from '@/utils/constants';
+import { HEADSTASH_ENDPOINT_URL, NETWORK} from '@/utils/constants';
 
 // const merkleRoot: string = '77fb25152b72ac67f5a155461e396b0788dd0567ec32a96f8201b899ad516b02';
 const contractAddress = "terp1s7xusjh42jlakhgs2a6wgxlvf9ynxuz87z6tpg2wwam7z650hnysp8v93n";
-// const moroccoContractAddress = null;
-const chainNames_1 = ["terpnettestnet"];
+const moroccoContractAddress = "terp1qeyjez6a9dwlghf9d6cy44fxmsajztw257586akk6xn6k88x0gusk40ehd";
+const chainNames_1 = ["terpnettestnet","terpnetwork"];
 const endpoint = "https://terp-testnet-rpc.itrocket.net"; 
 const networkMode = NETWORK;
 
@@ -154,7 +152,6 @@ export default function Headstash() {
   // TODO: manual fetch proof button
 
 
-
   if (!isClient) return null;
 
   // create faucet 
@@ -261,12 +258,13 @@ export default function Headstash() {
         },
       };
       // console.log("Execute Message:", executeMsg);
+      const contract = NETWORK === 'testnet' ? contractAddress : moroccoContractAddress ;
 
       const msgExecute: MsgExecuteContractEncodeObject = {
         typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
         value: {
           sender: address,
-          contract: contractAddress,
+          contract: contract,
           msg: toUtf8(JSON.stringify(executeMsg)),
           funds: [],
         },
