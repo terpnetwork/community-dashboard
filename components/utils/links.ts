@@ -1,7 +1,7 @@
 import { ImGithub, ImTwitter } from 'react-icons/im'
 import { SiDiscord } from 'react-icons/si'
 
-import { BLOCK_EXPLORER_URL, NETWORK } from '../../../utils/constants'
+import { BLOCK_EXPLORER_URL, NETWORK } from '../../utils/constants'
 
 export const links = {
   // main links

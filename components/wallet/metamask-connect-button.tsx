@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   useDisconnect,
 } from 'wagmi'
-import {getShortAddress} from '@/components/badges/utils/getShortAddress' 
+import {getShortAddress} from '@/components/utils/getShortAddress' 
 import toast from "react-hot-toast";
 
 interface MetamaskConnectButtonProps {

@@ -341,13 +341,14 @@ export default function Headstash() {
         <div className="steps-card">
           <div className="inner-card">
             <div className="step-one-card">
-              <PageHeaderHeading>1. Connect Metamask</PageHeaderHeading>
+              <PageHeaderHeading className="step-1">1. Connect Metamask</PageHeaderHeading>
               <PageHeaderDescription>First let&apos;s check if your account was included in the headstash airdrop. Press the button to connect with a Metamask Wallet. </PageHeaderDescription>
               <br />
               <br />  
               <MetamaskConnectButton handleEthPubkey={handleEthPubkey} />
               <br />
-              <PageHeaderHeading>Your Headstash Amount: <br /> </PageHeaderHeading>
+              <PageHeaderHeading className="terpAmount">Your Headstash Amount: <br /> </PageHeaderHeading>
+              <br />
               <div className="steps-container center">
                 <PageHeaderHeading className="terpAmount">
                   {amount !== 'Not Eligible' ? formattedTerpAmount : 'Not Eligible'}
@@ -366,7 +367,7 @@ export default function Headstash() {
               <div className="steps-card">
                 <div className="inner-card">
                   <div className="step-one-card">
-                    <PageHeaderHeading>2. Connect Cosmos Wallet</PageHeaderHeading>
+                    <PageHeaderHeading className="step-1">2. Connect Cosmos Wallet</PageHeaderHeading>
                     <PageHeaderDescription>Nice! Now, choose a compatible wallet to claim your headstash allocation.  </PageHeaderDescription>
                     <br />
                     <br />
@@ -377,7 +378,7 @@ export default function Headstash() {
               <div className="steps-card">
                 <div className="inner-card">
                   <div className="step-one-card">
-                    <PageHeaderHeading>3. Verify Metamask Ownership</PageHeaderHeading>
+                    <PageHeaderHeading className="step-1">3. Verify Metamask Ownership</PageHeaderHeading>
                     <PageHeaderDescription>Next, prompt Metamask to sign a message containing your Interchain wallet public key. Before signing, ensure the public account connected is included in the Metamask app.</PageHeaderDescription>
                     <br />
                     <button
@@ -416,7 +417,7 @@ export default function Headstash() {
               <div className="steps-card">
                 <div className="inner-card">
                   <div className="step-one-card">
-                    <PageHeaderHeading>4. Setup Terp Account & <br /> Claim Your Headstash</PageHeaderHeading>
+                    <PageHeaderHeading className="step-1">4. Setup Terp Account & <br /> Claim Your Headstash</PageHeaderHeading>
                     <PageHeaderDescription>
                       Transactions on Terp Network require fees, <br /> Use the faucet for this one! 👍
                     </PageHeaderDescription>

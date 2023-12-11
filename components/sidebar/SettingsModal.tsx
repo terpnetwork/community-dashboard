@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { Timezone, setTimezone, useGlobalSettings } from '../contexts/globalSettings'
-import { Button } from './Button'
+import { Timezone, setTimezone, useGlobalSettings } from '../navbars/globalSettings'
+import { Button } from '../ui/button/Button'
 export interface SettingsModalProps {
   timezone?: Timezone
 }

@@ -2,7 +2,7 @@ import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
-import { CommandMenu } from "@/components/menus/command-menu"
+import { CommandMenu } from "@/components/sidebar/command-menu"
 import { Icons } from "@/components/ui/icons"
 import { MainNav } from "@/components/navbars/main-nav"
 import { MobileNav } from "@/components/navbars/mobile-nav"

@@ -10,9 +10,9 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
 import { SidebarLayout } from './SidebarLayout'
-import { WalletLoader } from './WalletLoader'
-import { Timezone, setTimezone } from '../contexts/globalSettings'
-import { setLogItemList, useLogStore } from '../contexts/log'
+import { WalletLoader } from '../wallet/WalletLoader'
+import { Timezone, setTimezone } from '../navbars/globalSettings'
+import { setLogItemList, useLogStore } from './log'
 import { footerLinks, socialsLinks } from '../utils/links'
 import { useChain } from '@cosmos-kit/react'
 const chainNames_1 = ["terpnetwork"];
@@ -73,7 +73,7 @@ export const Sidebar = () => {
               </ul>
             </li>
           </ul>
-      {/* <ul className="group p-2 w-full bg-transparent menu rounded-box">
+      <ul className="group p-2 w-full bg-transparent menu rounded-box">
             <li tabIndex={1}>
               <span
                 className={clsx(
@@ -82,7 +82,59 @@ export const Sidebar = () => {
                   router.asPath.includes('/w/badges/') ? 'text-white' : 'text-gray',
                 )}
               >
-                <Link href="/w/badges/"> Badges </Link>
+              Network
+              </span>
+              <ul className="z-50 p-2 rounded-box bg-base-200">
+              <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                    router.asPath.includes('https://ping.pub/terp/staking') ? 'text-white' : 'text-gray',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://ping.pub/terp/staking">Stake TERP</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                    router.asPath.includes('https://ping.pub/terp/staking') ? 'text-white' : 'text-gray',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="/w/fun">Swap/Bridge</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                    router.asPath.includes('/w/fun') ? 'text-white' : 'text-gray',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://github.com/terpnetwork/core-cosmwasm">Smart Contracts</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                    router.asPath.includes('/w/utils') ? 'text-white' : 'text-gray',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="/w/utils/">Public Utilities</Link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul className="group p-2 w-full bg-transparent menu rounded-box">
+            <li tabIndex={1}>
+              <span
+                className={clsx(
+                  'z-40 text-xl font-bold group-hover:text-white bg-transparent rounded-lg small-caps',
+                  'hover:bg-white/5 transition-colors',
+                  router.asPath.includes('/w/badges/') ? 'text-white' : 'text-gray',
+                )}
+              >
+                <Link href="/w/badges/"> Interchain Apps </Link>
               </span>
               <ul className="z-50 p-2 rounded-box bg-base-200">
               <li
@@ -92,38 +144,11 @@ export const Sidebar = () => {
                   )}
                   tabIndex={-1}
                 >
-                  <Link href="/w/badges/claim/">Claim a Badge</Link>
-                </li>
-                <li
-                  className={clsx(
-                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
-                    router.asPath.includes('/badges/create/') ? 'text-white' : 'text-gray',
-                  )}
-                  tabIndex={-1}
-                >
-                  <Link href="/w/badges/create/">Create a Badge</Link>
-                </li>
-                <li
-                  className={clsx(
-                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
-                    router.asPath.includes('/badges/myBadges/') ? 'text-white' : 'text-gray',
-                  )}
-                  tabIndex={-1}
-                >
-                  <Link href="/w/badges/mine/">My Badges</Link>
-                </li>
-                <li
-                  className={clsx(
-                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
-                    router.asPath.includes('/badges/,/') ? 'text-white' : 'text-gray',
-                  )}
-                  tabIndex={-1}
-                >
-                  <Link href="/w/badges/manage/">Badge Actions</Link>
+                  <Link href="https://daodao.zone/dao/juno1q2lwlsfawx5kyc8et26g9u3834g0qj0svrlpzn66nmzzmml66zastepvq4/proposals">DAO DAO</Link>
                 </li>
               </ul>
             </li>
-          </ul> */}
+          </ul>
 
       </div>
 

@@ -1,7 +1,7 @@
 
 import { useRouter } from 'next/router'
 import { DefaultSeo } from 'next-seo'
-import { WEBSITE_URL } from '../../../utils/constants'
+import { WEBSITE_URL } from '../../utils/constants'
 import { meta } from './meta'
 
 

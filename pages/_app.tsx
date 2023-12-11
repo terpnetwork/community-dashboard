@@ -22,10 +22,9 @@ import { wallets as leapWallets } from "@cosmos-kit/leap";
 import { wallets as snapWallet } from "@cosmos-kit/leap-metamask-cosmos-snap";
 import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { queryClient } from '@/config/react-query';
-import { ContractsProvider } from '@/components/badges/contexts/contracts';
 import { Toaster } from 'react-hot-toast';
-import { Layout } from '@/components/badges/components/layout';
-import { getComponentMetadata } from '@/components/badges/utils/layout';
+import { Layout } from '@/components/layout';
+import { getComponentMetadata } from '@/components/utils/layout';
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
@@ -115,12 +114,10 @@ export default function App({ Component, pageProps }: AppProps) {
         >
           <SiteHeader />
           <WagmiConfig config={config}>
-          <ContractsProvider>
             <Toaster position="top-right" />
             <Layout metadata={getComponentMetadata(Component)}>
               <Component {...pageProps} />
             </Layout>
-          </ContractsProvider>
      </WagmiConfig>
         </ChainProvider>
       </QueryClientProvider>

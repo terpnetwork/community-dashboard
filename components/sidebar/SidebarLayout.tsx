@@ -2,7 +2,8 @@ import clsx from 'clsx'
 
 import type { ReactNode } from 'react'
 import { FaChevronLeft } from 'react-icons/fa'
-import { toggleSidebar, useSidebarStore } from '../contexts/sidebar'
+import { toggleSidebar, useSidebarStore } from '../navbars/sidebar'
+
 
 export interface SidebarLayoutProps {
   children: ReactNode
