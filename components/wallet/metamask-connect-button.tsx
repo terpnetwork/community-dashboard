@@ -1,6 +1,6 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import {
+  useAccount,
   useDisconnect,
 } from 'wagmi'
 import {getShortAddress} from '@/components/utils/getShortAddress' 
@@ -14,17 +14,18 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   handleEthPubkey,
 }) => {
   const [eth_pubkey, setEthPubkey] = useState<string>("");
+   const {status }= useAccount();
   const { disconnect } = useDisconnect();
 
   const connectWallet = async () => {
-    if ((window as any).ethereum) {
-        const addressArray = await (window as any).ethereum.request({
+    if (window.ethereum && status !== 'connected' ) {
+        const addressArray = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
         const obj = {
           address: addressArray[0],
         };
-        return obj;
+        return obj; 
     } else {
       throw new Error(
         "You must install Metamask, a virtual Ethereum wallet, in your browser."
@@ -33,8 +34,8 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   };
 
   const getConnectedMetamaskWallet = async () => {
-    if ((window as any).ethereum) {
-        const addressArray = await (window as any).ethereum.request({
+    if (window.ethereum) {
+        const addressArray = await window.ethereum.request({
           method: "eth_accounts",
         });
         if (addressArray.length > 0) {
@@ -72,8 +73,8 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
   };
 
   const addWalletListener = () => {
-    if ((window as any).ethereum) {
-      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts: string[]) => {
         if (accounts.length > 0) {
           setEthPubkey(accounts[0]);
         } else {
@@ -98,9 +99,10 @@ toast.error(`${e}`)
   };
 
   useEffect(() => {
-    load().then(() => {
-      handleEthPubkey(eth_pubkey);
-    });
+    handleEthPubkey(eth_pubkey);
+    // load().then(() => {
+   
+    // });
   }, [eth_pubkey, handleEthPubkey]);
 
 

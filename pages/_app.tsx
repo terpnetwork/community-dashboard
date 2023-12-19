@@ -78,39 +78,6 @@ export default function App({ Component, pageProps }: AppProps) {
             // ...web3AuthWallets,
           ]}
           throwErrors={false}
-          subscribeConnectEvents={false}
-          defaultNameService={"stargaze"}
-          walletConnectOptions={{
-            signClient: {
-              projectId: "a8510432ebb71e6948cfd6cde54b70f7",
-              relayUrl: "wss://relay.walletconnect.org",
-              metadata: {
-                name: "CosmosKit Example",
-                description: "CosmosKit test dapp",
-                url: "https://test.cosmoskit.com/",
-                icons: [
-                  "https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/packages/docs/public/favicon-96x96.png",
-                ],
-              },
-            },
-          }}
-          logLevel={"DEBUG"}
-          endpointOptions={{
-            isLazy: true,
-            endpoints: {
-              cosmoshub: {
-                isLazy: false,
-                rpc: [
-                  {
-                    isLazy: true,
-                    url: "https://rpc.cosmos.directory/cosmoshub",
-                    headers: {},
-                  },
-                ],
-              }
-            },
-          }}
-          disableIframe={false}
         >
           <SiteHeader />
           <WagmiConfig config={config}>
@@ -118,7 +85,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Layout metadata={getComponentMetadata(Component)}>
               <Component {...pageProps} />
             </Layout>
-     </WagmiConfig>
+          </WagmiConfig>
         </ChainProvider>
       </QueryClientProvider>
     </RootLayout>

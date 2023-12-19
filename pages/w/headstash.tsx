@@ -49,26 +49,27 @@ export default function Headstash() {
     setEthPubkey(eth_pubkey);
   };
 
-  useEffect(() => {
-    const handleWalletDisconnect = () => {
-      // eth_pubkey null on wallet disconnect
-      setEthPubkey('');
-    };
+  // useEffect(() => {
+  //   const handleWalletDisconnect = () => {
+  //     // eth_pubkey null on wallet disconnect
+  //     setEthPubkey('');
+  //   };
 
-    // Check if window.ethereum is available
-    if (isConnected) {
-      // Listen for wallet disconnect events
-      (window as any).ethereum.on('disconnect', handleWalletDisconnect);
-    }
+  //   // Check if window.ethereum is available
+  //   if (isConnected) {
+  //     // Listen for wallet disconnect events
+  //     (window as any).ethereum.on('disconnect', handleWalletDisconnect);
+  //   }
 
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      if (isConnected) {
-        (window as any).ethereum.off('disconnect', handleWalletDisconnect);
-        resetProofs();
-      }
-    };
-  }, [isConnected]);
+  //   // Cleanup the event listener when the component unmounts
+  //   return () => {
+  //     if (isConnected) {
+  //       (window as any).ethereum.off('disconnect', handleWalletDisconnect);
+  //         // resets proofs
+  //       resetProofs();
+  //     }
+  //   };
+  // }, [isConnected]);
 
   // connect Keplr
   useEffect(() => {
@@ -145,12 +146,10 @@ export default function Headstash() {
     void fetchProofs(eth_pubkey);
   }, [status, eth_pubkey, wallet]);
 
-  // resets proofs
   const resetProofs = () => {
     setProofs(['']);
   };
   // TODO: manual fetch proof button
-
 
   if (!isClient) return null;
 
