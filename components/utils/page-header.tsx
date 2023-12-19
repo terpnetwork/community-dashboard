@@ -27,9 +27,14 @@ function PageHeaderHeading({
   return (
     <h1
       className={cn(
-        "text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]",
+        "z-40  text-3xl font-bold  md:text-5xl rounded-lg rounded small-caps ",
         className
-      )}
+      )
+      // clsx(
+      //   'z-40 text-xl font-bold group-hover:text-white bg-transparent rounded-lg small-caps',
+      //   'hover:bg-white/5 transition-colors',
+      // )
+    }
       {...props}
     />
   )
@@ -46,7 +51,8 @@ function PageHeaderDescription({
         className
       )}
       {...props}
-    />
+      >
+      </Balance>
   )
 }
 

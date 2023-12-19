@@ -1,11 +1,11 @@
-import { Icons } from "@/components/ui/icons"
+import { Icon } from "@interchain-ui/react"
 
 export interface NavItem {
   title: string
   href?: string
   disabled?: boolean
   external?: boolean
-  icon?: keyof typeof Icons
+  icon?: keyof typeof Icon
   label?: string
 }
 

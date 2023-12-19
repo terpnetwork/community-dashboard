@@ -1,12 +1,12 @@
-import Link from "next/link"
+// import Link from "next/link"
 
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
-import { CommandMenu } from "@/components/menus/command-menu"
-import { Icons } from "@/components/ui/icons"
+// import { siteConfig } from "@/config/site"
+// import { cn } from "@/lib/utils"
+// import { CommandMenu } from "@/components/sidebar/command-menu"
+// import { Icons } from "@/components/ui/icons"
 import { MainNav } from "@/components/navbars/main-nav"
 import { MobileNav } from "@/components/navbars/mobile-nav"
-import { buttonVariants } from "@/components/ui/button"
+// import { buttonVariants } from "@/components/ui/button"
 
 export function SiteHeader() {
   return (
@@ -16,9 +16,9 @@ export function SiteHeader() {
         <MobileNav />
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
-            <CommandMenu />
+            {/* <CommandMenu /> */}
           </div>
-          <nav className="flex items-center">
+          {/* <nav className="flex items-center">
             <Link
               href={siteConfig.links.github}
               target="_blank"
@@ -38,7 +38,7 @@ export function SiteHeader() {
             </Link>
          
           
-          </nav>
+          </nav> */}
         </div>
       </div>
     </header>

@@ -22,26 +22,26 @@ export function MainNav() {
       <nav className="flex items-center space-x-6 text-sm font-medium">
       
         <Link
-          href="https://docs.terp.network"
+          href="/welcome"
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname?.startsWith("/w")
+            pathname?.startsWith("/welcome")
               ? "text-foreground"
               : "text-foreground/60"
           )}
         >
           First Time Here?
         </Link>
-        <Link
-          href="/w"
+        {/* <Link
+          href="/guides"
           className={cn(
             "transition-colors hover:text-foreground/80",
             pathname === "/docs" ? "text-foreground" : "text-foreground/60"
           )}
         >
-          All Widgets
-        </Link>
-        <Link
+          Guides
+        </Link> */}
+        {/* <Link
           href={siteConfig.links.github}
           className={cn(
             "transition-colors hover:text-foreground/80",
@@ -51,7 +51,7 @@ export function MainNav() {
           )}
         >
           Developer Docs
-        </Link>
+        </Link> */}
         <Link
           href={siteConfig.links.github}
           className={cn(
