@@ -32,7 +32,7 @@ export function MainNav() {
         >
           First Time Here?
         </Link>
-        <Link
+        {/* <Link
           href="/guides"
           className={cn(
             "transition-colors hover:text-foreground/80",
@@ -40,8 +40,8 @@ export function MainNav() {
           )}
         >
           Guides
-        </Link>
-        <Link
+        </Link> */}
+        {/* <Link
           href={siteConfig.links.github}
           className={cn(
             "transition-colors hover:text-foreground/80",
@@ -51,7 +51,7 @@ export function MainNav() {
           )}
         >
           Developer Docs
-        </Link>
+        </Link> */}
         <Link
           href={siteConfig.links.github}
           className={cn(

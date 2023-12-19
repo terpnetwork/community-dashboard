@@ -101,9 +101,9 @@ export const Sidebar = () => {
                   )}
                   tabIndex={-1}
                 >
-                  <Link href="/w/fun">Swap/Bridge</Link>
+                  <Link href="https://ibc.fun">Swap/Bridge</Link>
                 </li>
-                <li
+                {/* <li
                   className={clsx(
                     'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
                     router.asPath.includes('/w/fun') ? 'text-white' : 'text-gray',
@@ -111,8 +111,8 @@ export const Sidebar = () => {
                   tabIndex={-1}
                 >
                   <Link href="https://github.com/terpnetwork/core-cosmwasm">Smart Contracts</Link>
-                </li>
-                <li
+                </li> */}
+                {/* <li
                   className={clsx(
                     'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
                     router.asPath.includes('/w/utils') ? 'text-white' : 'text-gray',
@@ -120,7 +120,7 @@ export const Sidebar = () => {
                   tabIndex={-1}
                 >
                   <Link href="/w/utils/">Public Utilities</Link>
-                </li>
+                </li> */}
               </ul>
             </li>
           </ul>
@@ -131,20 +131,59 @@ export const Sidebar = () => {
                 className={clsx(
                   'z-40 text-xl font-bold group-hover:text-white bg-transparent rounded-lg small-caps',
                   'hover:bg-white/5 transition-colors',
-                  router.asPath.includes('/w/badges/') ? 'text-white' : 'text-gray',
+
                 )}
               >
-                <Link href="/w/badges/"> Interchain Apps </Link>
+  Interchain Apps
               </span>
               <ul className="z-50 p-2 rounded-box bg-base-200">
               <li
                   className={clsx(
                     'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
-                    router.asPath.includes('/badges/create/') ? 'text-white' : 'text-gray',
                   )}
                   tabIndex={-1}
                 >
                   <Link href="https://daodao.zone/dao/juno1q2lwlsfawx5kyc8et26g9u3834g0qj0svrlpzn66nmzzmml66zastepvq4/proposals">DAO DAO</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://stargaze.zone">Stargaze</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://osmosis.zone">Osmosis</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://shadeprotocol.io">Shade</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://console.akash.network">Akash Console</Link>
+                </li>
+                <li
+                  className={clsx(
+                    'text-lg font-bold hover:text-white hover:bg-stargaze-80 rounded',
+                  )}
+                  tabIndex={-1}
+                >
+                  <Link href="https://omniflix.network">Omniflix</Link>
                 </li>
               </ul>
             </li>

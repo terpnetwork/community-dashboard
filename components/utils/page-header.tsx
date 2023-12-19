@@ -51,7 +51,8 @@ function PageHeaderDescription({
         className
       )}
       {...props}
-    />
+      >
+      </Balance>
   )
 }
 

@@ -1,8 +1,9 @@
-import { NETWORK } from '@/lib/utils'
+
 import { useChain as useCosmosKitChain } from '@cosmos-kit/react'
 import { chains } from 'chain-registry'
 import { getConfig } from 'config'
 import { fromBech32 } from '@cosmjs/encoding'
+import { NETWORK } from './constants'
 
 /**
  * Hook to retrieve the wallet for the current chain.
@@ -13,7 +14,6 @@ export const useWallet = () => {
   if (!chain) {
     throw new Error('Chain not found')
   }
-
   return useCosmosKitChain(chain.chain_name)
 }
 

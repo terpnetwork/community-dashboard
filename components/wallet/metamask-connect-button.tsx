@@ -33,26 +33,26 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
     }
   };
 
-  const getConnectedMetamaskWallet = async () => {
-    if (window.ethereum) {
-        const addressArray = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-        if (addressArray.length > 0) {
-          return {
-            address: addressArray[0],
-          };
-        } else {
-          throw new Error(
-            "Connect to Metamask using the connect wallet button."
-          );
-        }
-    } else {
-      throw new Error(
-        "You must install Metamask, a virtual Ethereum wallet, in your browser."
-      );
-    }
-  };
+  // const getConnectedMetamaskWallet = async () => {
+  //   if (window.ethereum) {
+  //       const addressArray = await window.ethereum.request({
+  //         method: "eth_accounts",
+  //       });
+  //       if (addressArray.length > 0) {
+  //         return {
+  //           address: addressArray[0],
+  //         };
+  //       } else {
+  //         throw new Error(
+  //           "Connect to Metamask using the connect wallet button."
+  //         );
+  //       }
+  //   } else {
+  //     throw new Error(
+  //       "You must install Metamask, a virtual Ethereum wallet, in your browser."
+  //     );
+  //   }
+  // };
 
   const walletConnectHandler = async () => {
     try {
@@ -87,22 +87,10 @@ const MetamaskConnectButton: React.FC<MetamaskConnectButtonProps> = ({
       );
     }
   };
-
-  const load = async () => {
-    try {
-      const address = await getConnectedMetamaskWallet();
-      setEthPubkey(address.address);
-      addWalletListener();
-    } catch (e) {
-toast.error(`${e}`)
-    }
-  };
-
-  useEffect(() => {
+    
+    useEffect(() => {
+    addWalletListener();
     handleEthPubkey(eth_pubkey);
-    // load().then(() => {
-   
-    // });
   }, [eth_pubkey, handleEthPubkey]);
 
 
