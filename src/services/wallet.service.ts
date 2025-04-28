@@ -142,7 +142,7 @@ const connectThrowaway = async (lcd: string, chainID: string, lsKey: string) => 
   let walletAddress = wallet.address
   let pubkey = wallet.publicKey
 
-  console.log('connectThrowaway', wallet.getAccounts())
+  // console.log('connectThrowaway', wallet.getAccounts())
 
   const secretjs: SecretNetworkClient = new SecretNetworkClient({
     url: lcd,
@@ -158,13 +158,14 @@ const connectWallet = async (
   walletAPIType: WalletAPIType = 'keplr',
   lcd: string = SECRET_TESTNET_LCD,
   chainID: string = SECRET_TESTNET_CHAIN_ID,
-  throwaway: string = 'tlsk-'
+  throwaway: string = 'tlsk-' // default if no client side wallet is connected
 ) => {
   let walletAddress: string
   let secretNetworkClient: SecretNetworkClient
   if (walletAPIType === 'leap') {
     ;({ walletAddress, secretjs: secretNetworkClient } = await connectLeap(lcd, chainID))
   } else if (walletAPIType === 'throwaway') {
+    // todo: improve function for key storage implementation.
     ;({ walletAddress, secretjs: secretNetworkClient } = await connectThrowaway(lcd, chainID, throwaway))
   } else {
     ;({ walletAddress, secretjs: secretNetworkClient } = await connectKeplr(lcd, chainID))

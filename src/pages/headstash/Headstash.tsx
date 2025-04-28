@@ -27,7 +27,6 @@ import Modal from '@/components/UI/Modal/Modal'
 import FeegrantButton from 'components/FeeGrant/components/ActionableStatus'
 import {
   HeadstashAllocation,
-  HeadstashItem,
   initialAmountDetails,
   initialSigDetails,
   initialThrowawayDetails,
@@ -278,7 +277,7 @@ function Headstash() {
         await provider.connect()
       }
       setModalState(true)
-      handleSolPubkey(provider.publicKey)
+      handleSolPubkey(Buffer.from(provider.publicKey).toString('base64'))
     } catch (error) {
       console.error(error)
     }
@@ -293,25 +292,26 @@ function Headstash() {
       throw new Error('Not eligible!')
     }
 
-    // form solana msg to sign
-    const cosmosAddress = walletAddress.toString()
-    const messageBytes = Buffer.from(`HREAM ~ ${throwawayPubkey.address} ~ ${cosmosAddress}`, 'utf8')
+    // form msg to be signed by solana provider
+    const throwawayPublicWalletAddr = throwawayPubkey.address.toString()
+    // todo: grab plaintext set from contract address
+    const PLAINTXT_TO_ENCRYPT = Buffer.from(`HREAM ~ ${throwawayPublicWalletAddr}`, 'utf8')
 
     // sign the transaction using Phantom wallet (returns bytes)
-    const payloadSignature = await provider.signMessage(messageBytes)
+    const payloadSignature = await provider.signMessage(PLAINTXT_TO_ENCRYPT)
 
     // return expected sig response type
     const sig: SigDetails = {
-      message: messageBytes.toString('base64'),
-      signatureHash: payloadSignature.signature,
-      address: payloadSignature.publicKey,
+      message: PLAINTXT_TO_ENCRYPT.toString('base64'),
+      signatureHash: Buffer.from(payloadSignature.signature).toString('base64'),
+      address: Buffer.from(payloadSignature.publicKey).toString('base64'),
       timestamp: new Date().toISOString()
     }
 
     // let hash = await encrypt_sig(sig.signatureHash)
     // setEncryptedOfflineSig(hash)
-    setSolPubkey(throwawayPubkey.address)
 
+    setSolPubkey(sig.address)
     setSigDetails(sig)
     setUnEncryptedOfflineSig(sig.signatureHash)
     return sig
@@ -330,22 +330,20 @@ function Headstash() {
   // sign msg to claim headstash with throwaway wallet, gas fees covered.
   const claimHeadstashMsg = async () => {
     try {
-      const test = `hstk-${getPubkey()}`
-      console.log(test)
+      const localstorageKey = `hstk-${getPubkey()}`
+      console.log(localstorageKey)
       const { secretjs: importedSecretjs } = await WalletService.connectWallet(
         'throwaway', // grabs throwaway mnemonic from localstorage
         apiUrl,
         SECRET_TESTNET_CHAIN_ID,
-        test
+        localstorageKey
       )
 
       setSecretjs(importedSecretjs)
 
       if (sigDetails.signatureHash != '') {
-        // if (ethPubkey != '') {}
-        // if (solPubkey != '') {}
         // cw-headstash entry point
-        const claim = { pubkey: getPubkey(), offline_sig: sigDetails.signatureHash, heady_wallet: walletAddress }
+        const claim = { sig_addr: getPubkey(), sig: sigDetails.signatureHash }
         console.log(claim)
 
         // form msg to broadcast

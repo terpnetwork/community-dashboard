@@ -1269,35 +1269,6 @@ export const tokens: Token[] = [
       }
     ]
   },
-  /*  {
-    name: 'CRE',
-    address: 'secret1tatdlkyznf00m3a7hftw5daaq2nk38ugfphuyr',
-    code_hash:
-      '5a085bd8ed89de92b35134ddd12505a602c7759ea25fb5c089ba03c8535b3042',
-    image: '/cre.svg',
-    decimals: 6,
-    coingecko_id: 'crescent-network',
-    deposits: [
-      {
-        chain_name: 'Crescent',
-        denom: 'ucre',
-      },
-    ],
-    withdrawals: [
-      {
-        chain_name: 'Crescent',
-        denom: ibcDenom(
-          [
-            {
-              incomingChannelId: chains['Crescent'].withdraw_channel_id,
-              incomingPortId: 'transfer',
-            },
-          ],
-          'ucre'
-        ),
-      },
-    ],
-  }, */
   {
     name: 'DOT',
     description: 'Polkadot Governance Token',
