@@ -1,0 +1,24 @@
+# Use an official Node.js 16 image as a base
+FROM node:latest
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the package*.json files to the working directory
+COPY package*.json ./
+
+# Install the dependencies
+RUN npm install
+RUN npm install ecies-wasm
+
+# Copy the application code into the container
+COPY . .
+
+# Build the wasm-bindgen package
+RUN npm run build
+
+# Expose the port the application will listen on
+EXPOSE 3001
+
+# Run the command to start the application when the container launches
+CMD ["npm", "run", "base"]

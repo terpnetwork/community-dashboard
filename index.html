@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Headstash Dashboard</title>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="prefetch" href="https://terp.network/headstash" />
+
+    <!-- WHIP-003 definitions -->
+    <!-- <link rel="prefetch" as="fetch" href="/whip-003.json" data-whip-003 /> -->
+  </head>
+  <body>
+    <div id="root" class="bg-slate-100 dark:bg-zinc-900 text-black dark:text-white"></div>
+    <script>
+      // fix the keplr window type error when there are no node polyfills
+      var global = global || window
+    </script>
+    <script type="module">
+      import { Buffer } from 'buffer'
+      window.Buffer = Buffer
+    </script>
+    <script type="module" src="/src/App.tsx"></script>
+  </body>
+</html>

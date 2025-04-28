@@ -1,35 +1,26 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# General
+build
+.vscode/launch.json
+package-lock.json
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
 
-# testing
-/coverage
+# Dependency directories
+node_modules/
+caching-api/node_modules/
+jspm_packages/
 
-# next.js
-/.next/
-/out/
+# Optional npm cache directory
+.npm
 
-# production
-/build
+# dotenv environment variable files
+caching-api/.env
+caching-api/.env.test
+.env
+.env.test
 
-# misc
-.DS_Store
-*.pem
+# OS generated files
+.DS_Store*
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+ehthumbs.db
+Icon?
+Thumbs.db
